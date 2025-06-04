@@ -345,41 +345,42 @@
         // const btnDodajSkeniranoNaListu = document.getElementById('btn-dodaj-skenirano-na-listu'); // Trebat će nam kasnije
 
         // Funkcija za izračun cijene po jedinici mjere
-        function izracunajCijenuPoJM(cijenaPakiranjaStr, kolicinaStr, jedinicaMjere)
+               function izracunajCijenuPoJM(cijenaPakiranjaStr, kolicinaStr, jedinicaMjere) {
             console.log("--- Ulaz u izracunajCijenuPoJM ---:", 
-            "Cijena Pak:", cijenaPakiranjaStr, 
-            "Količina Str:", kolicinaStr, 
-            "Jedinica:", jedinicaMjere);{
-            const cijenaPakiranja = parseFloat(cijenaPakiranjaStr);
-            let kolicina = parseFloat(kolicinaStr); // Npr. "500" za grame ili "0.75" za litre
+                        "Cijena Pak:", cijenaPakiranjaStr, 
+                        "Količina Str:", kolicinaStr, 
+                        "Jedinica:", jedinicaMjere); // NOVI LOG
 
-            if (isNaN(cijenaPakiranja) || isNaN(kolicina) || kolicina === 0) {
+            const cijenaPakiranja = parseFloat(cijenaPakiranjaStr);
+            let kolicina = parseFloat(kolicinaStr); 
+
+            if (isNaN(cijenaPakiranja) || isNaN(kolicina) || kolicina === 0 || jedinicaMjere === null || jedinicaMjere === undefined) {
+                console.warn("Neispravni ulazni podaci za izracunajCijenuPoJM:", cijenaPakiranjaStr, kolicinaStr, jedinicaMjere);
                 return "N/A";
             }
 
             let cijenaPoOsnovnojJM = "";
             let osnovnaJM = "";
 
-            jedinicaMjere = jedinicaMjere ? jedinicaMjere.toLowerCase() : "";
+            jedinicaMjere = jedinicaMjere.toLowerCase(); // Osiguraj mala slova
 
-            if (jedinicaMjere === "g" || jedinicaMjere === "gr") { // Grami
+            if (jedinicaMjere === "g" || jedinicaMjere === "gr") {
                 cijenaPoOsnovnojJM = ((cijenaPakiranja / kolicina) * 1000).toFixed(2);
                 osnovnaJM = "kg";
-            } else if (jedinicaMjere === "ml") { // Mililitri
+            } else if (jedinicaMjere === "ml") {
                 cijenaPoOsnovnojJM = ((cijenaPakiranja / kolicina) * 1000).toFixed(2);
                 osnovnaJM = "l";
-            } else if (jedinicaMjere === "kg" || jedinicaMjere === "l") { // Kilogrami ili Litre
+            } else if (jedinicaMjere === "kg" || jedinicaMjere === "l") {
                 cijenaPoOsnovnojJM = (cijenaPakiranja / kolicina).toFixed(2);
                 osnovnaJM = jedinicaMjere;
-            } else if (jedinicaMjere === "kom" || jedinicaMjere === "ko") { // Komadi
-                return `${cijenaPakiranja.toFixed(2)} EUR/kom`; // Cijena je već po komadu
+            } else if (jedinicaMjere === "kom" || jedinicaMjere === "ko") {
+                return `${cijenaPakiranja.toFixed(2)} EUR/kom`;
             } else {
-                return "N/A (nepoznata JM)"; // Nepoznata jedinica mjere
+                console.warn("Nepoznata jedinica mjere za izračun:", jedinicaMjere);
+                return "N/A (nepoznata JM)"; 
             }
             return `${cijenaPoOsnovnojJM} EUR/${osnovnaJM}`;
         }
-
-
         async function dohvatiPodatkeSkeniranogProizvoda(ean, chainCode) {
             skeniranNazivEl.textContent = `Tražim podatke za EAN: ${ean}...`;
             skeniranaCijenaEl.textContent = "...";
