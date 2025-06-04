@@ -345,7 +345,11 @@
         // const btnDodajSkeniranoNaListu = document.getElementById('btn-dodaj-skenirano-na-listu'); // Trebat će nam kasnije
 
         // Funkcija za izračun cijene po jedinici mjere
-        function izracunajCijenuPoJM(cijenaPakiranjaStr, kolicinaStr, jedinicaMjere) {
+        function izracunajCijenuPoJM(cijenaPakiranjaStr, kolicinaStr, jedinicaMjere)
+            console.log("--- Ulaz u izracunajCijenuPoJM ---:", 
+            "Cijena Pak:", cijenaPakiranjaStr, 
+            "Količina Str:", kolicinaStr, 
+            "Jedinica:", jedinicaMjere);{
             const cijenaPakiranja = parseFloat(cijenaPakiranjaStr);
             let kolicina = parseFloat(kolicinaStr); // Npr. "500" za grame ili "0.75" za litre
 
@@ -410,6 +414,7 @@
 
                 if (data.chains && data.chains.length > 0) {
                     const productInfo = data.chains[0]; // Uzimamo podatke za prvu (i jedinu) traženu trgovinu
+                    console.log("--- Sadržaj productInfo (data.chains[0]) ---:", productInfo);
                     
                     // Koristi općeniti naziv proizvoda ako postoji, inače naziv iz lanca
                     const nazivPrikaz = data.name || productInfo.name || "Nepoznat naziv";
@@ -418,6 +423,10 @@
                     
                     // Izračun cijene po jedinici mjere
                     // Trebamo koristiti quantity i unit iz 'productInfo' (unutar chains)
+                    console.log("--- Vrijednosti za izračun JM ---:", 
+            "Cijena:", productInfo.min_price, 
+            "Količina:", productInfo.quantity, 
+            "Jedinica:", productInfo.unit);
                     const cijenaPoJM = izracunajCijenuPoJM(productInfo.min_price, productInfo.quantity, productInfo.unit);
                     skeniranaCijenaPoJediniciEl.textContent = cijenaPoJM;
 
