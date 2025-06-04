@@ -19,10 +19,58 @@
         select { width:100%; padding:10px; margin-bottom:10px; font-size: 16px; }
         input[type="text"], input[type="number"] { width: calc(100% - 22px); padding: 10px; margin-bottom: 10px; font-size:16px; border: 1px solid #ccc; border-radius: 4px;}
 
-
         .hidden { display: none; }
 
-        #qr-reader { width: 100%; border: 1px solid #ccc; margin-bottom: 15px; }
+        /* Stilovi za novi raspored ekrana skeniranja */
+        #qr-reader-wrapper {
+            position: relative;
+            width: 100%;
+            background-color: #222; /* Tamnija pozadina dok se kamera ne učita */
+            min-height: 250px; /* Primjer minimalne visine, prilagodi po potrebi */
+            overflow: hidden; 
+        }
+
+        #qr-reader video { 
+            display: block; 
+            width: 100%;   
+            height: auto;  
+        }
+        /* Ako html5-qrcode omotava video u još jedan div, možda će trebati i ovo: */
+        /* #qr-reader > div:first-child { width: 100%; height: 100%; } */
+
+
+        #skener-overlay-gornji {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            z-index: 10;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%); 
+        }
+
+        #info-trgovina-skeniranje-overlay {
+            color: white;
+            font-size: 1.1em;
+            margin: 0 0 5px 0; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7); 
+        }
+
+        #status-skenera-overlay {
+            color: #f0f0f0; 
+            font-size: 0.9em;
+            margin: 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+        }
+        
+        #sadrzaj-ispod-skenera {
+            margin-top: 0; 
+            padding: 10px; 
+            width: 100%; 
+            box-sizing: border-box;
+        }
+
         #skenirani-proizvodi-lista-container, #info-skeniranog-proizvoda-container, #rezultati-pretrage-proizvoda, #lista-proizvoda-pretraga {
             border: 1px solid #eee; padding: 10px; margin-bottom: 15px; background-color: #f9f9f9; min-height: 50px;
         }
@@ -64,31 +112,40 @@
             <button id="btn-promijeni-trgovinu">Promijeni trgovinu</button>
         </section>
 
-        <!-- Ekran 4: Ekran skeniranja -->
+        <!-- Ekran 4: Ekran skeniranja (novi raspored) -->
         <section id="ekran-skeniranja" class="hidden">
-            <h2 id="info-trgovina-skeniranje">Skeniranje za [Naziv Trgovine]</h2>
-            <div id="skenirani-proizvodi-lista-container">
-                <h3>Moja lista:</h3>
-                <div id="skenirani-proizvodi-lista"></div>
-                <p><strong>Ukupno: <span id="ukupno-cijena-skeniranje">0.00</span> EUR</strong></p>
-            </div>
-            <div id="qr-reader-container" style="position: relative;">
-                 <div id="qr-reader" style="width:100%;"></div>
-            </div>
-            <p id="status-skenera" style="text-align: center; margin-top: 5px;">Usmjerite kameru prema barkodu.</p>
-            <div id="info-skeniranog-proizvoda-container" class="hidden">
-                <h3>Skenirani proizvod:</h3>
-                <p><strong>Naziv:</strong> <span id="skeniran-naziv"></span></p>
-                <p><strong>Cijena:</strong> <span id="skenirana-cijena"></span> EUR</p>
-                <p><strong>Cijena po JM:</strong> <span id="skenirana-cijena-po-jedinici"></span></p>
-                <div>
-                    <label for="skenirana-kolicina">Količina:</label>
-                    <input type="number" id="skenirana-kolicina" value="1" min="1" style="width: 60px; padding: 5px;">
+            <div id="qr-reader-wrapper">
+                <div id="qr-reader"></div> <!-- Kamera će se renderirati ovdje -->
+                <div id="skener-overlay-gornji">
+                    <h2 id="info-trgovina-skeniranje-overlay">Trgovina: [Naziv Trgovine]</h2>
+                    <p id="status-skenera-overlay">Pokretanje kamere...</p>
                 </div>
-                <button id="btn-dodaj-skenirano-na-listu" style="margin-top:10px;">Dodaj na listu</button>
             </div>
-            <button id="btn-pokreni-zaustavi-skener">Pokreni skener</button>
-            <button id="btn-nazad-sa-skeniranja">Nazad na akcije</button>
+
+            <div id="sadrzaj-ispod-skenera">
+                <div id="info-skeniranog-proizvoda-container" class="hidden" style="margin-bottom: 20px;">
+                    <h3>Skenirani proizvod:</h3>
+                    <p><strong>Naziv:</strong> <span id="skeniran-naziv"></span></p>
+                    <p><strong>Cijena:</strong> <span id="skenirana-cijena"></span> EUR</p>
+                    <p><strong>Cijena po JM:</strong> <span id="skenirana-cijena-po-jedinici"></span></p>
+                    <div>
+                        <label for="skenirana-kolicina">Količina:</label>
+                        <input type="number" id="skenirana-kolicina" value="1" min="1" style="width: 60px; padding: 5px;">
+                    </div>
+                    <button id="btn-dodaj-skenirano-na-listu" style="margin-top:10px;">Dodaj na listu</button>
+                </div>
+
+                <div id="skenirani-proizvodi-lista-container">
+                    <h3>Moja lista:</h3>
+                    <div id="skenirani-proizvodi-lista">
+                        <!-- Stavke liste -->
+                    </div>
+                    <p><strong>Ukupno: <span id="ukupno-cijena-skeniranje">0.00</span> EUR</strong></p>
+                </div>
+                
+                <button id="btn-pokreni-zaustavi-skener" style="margin-top: 20px;">Pokreni skener</button>
+                <button id="btn-nazad-sa-skeniranja">Nazad na akcije</button>
+            </div>
         </section>
 
         <!-- Ekran 5: Ekran pretraživanja i liste -->
@@ -111,7 +168,7 @@
     <script>
         // --- KONSTANTE ---
         const API_BASE_URL = "https://api.cijene.dev";
-        const API_KEY = "mee5xooThuithei4ees4bae3emos3ook"; // TVOJ API KLJUČ
+        const API_KEY = "mee5xooThuithei4ees4bae3emos3ook";
 
         // --- DOM ELEMENTI ---
         const pocetniEkran = document.getElementById('pocetni-ekran');
@@ -128,12 +185,12 @@
         const btnPotvrdiTrgovinu = document.getElementById('btn-potvrdi-trgovinu');
         const btnNazadNaPocetnuSaOdabira = document.getElementById('btn-nazad-na-pocetnu-sa-odabira');
 
-        const infoOdabranaTrgovina = document.getElementById('info-odabrana-trgovina');
+        const infoOdabranaTrgovina = document.getElementById('info-odabrana-trgovina'); // Za glavni ekran akcija
+        const infoTrgovinaSkeniranjeOverlay = document.getElementById('info-trgovina-skeniranje-overlay'); // Novi overlay
         const btnSkenirajProizvod = document.getElementById('btn-skeniraj-proizvod');
         const btnPretraziProizvodeGlavni = document.getElementById('btn-pretrazi-proizvode-glavni');
         const btnPromijeniTrgovinu = document.getElementById('btn-promijeni-trgovinu');
-
-        const infoTrgovinaSkeniranje = document.getElementById('info-trgovina-skeniranje');
+        
         const nazivTrgovineZaPretragu = document.getElementById('naziv-trgovine-za-pretragu');
         const btnNazadSaSkeniranja = document.getElementById('btn-nazad-sa-skeniranja');
         const btnNazadSaPretrageNaAkcije = document.getElementById('btn-nazad-sa-pretrage-na-akcije');
@@ -144,11 +201,15 @@
         const skeniranaCijenaPoJediniciEl = document.getElementById('skenirana-cijena-po-jedinici');
         const skeniranaKolicinaInput = document.getElementById('skenirana-kolicina');
 
+        const qrReaderElement = document.getElementById('qr-reader');
+        const statusSkeneraOverlayElement = document.getElementById('status-skenera-overlay'); // Novi overlay za status
+        const btnPokreniZaustaviSkener = document.getElementById('btn-pokreni-zaustavi-skener');
 
         // --- STANJE APLIKACIJE ---
         let trenutnoOdabranaTrgovina = null; 
         let zadnjeOdabranaTrgovinaKod = localStorage.getItem('zadnjaTrgovinaKod');
         let zadnjeOdabranaTrgovinaNaziv = localStorage.getItem('zadnjaTrgovinaNaziv');
+        let html5QrCode = null; // Instanca skenera
 
         // --- FUNKCIJE ZA NAVIGACIJU ---
         function prikaziEkran(ekranId) {
@@ -172,35 +233,22 @@
         }
 
         async function dohvatiITipkajTrgovine() {
+            // ... (ova funkcija ostaje ista kao prije)
             selectTrgovina.innerHTML = '<option value="">Učitavanje trgovina...</option>';
             selectTrgovina.disabled = true;
             btnPotvrdiTrgovinu.disabled = true;
-
             try {
                 const response = await fetch(`${API_BASE_URL}/v1/chains/`, {
                     method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Accept': 'application/json'
-                    }
+                    headers: { 'Authorization': `Bearer ${API_KEY}`, 'Accept': 'application/json' }
                 });
-
                 if (!response.ok) {
                     let errorMsg = `Greška ${response.status}: ${response.statusText}`;
-                    try { 
-                        const errData = await response.json(); 
-                        errorMsg += ` - ${errData.detail || JSON.stringify(errData)}`; 
-                    } catch (e) {
-                        console.warn("Tijelo odgovora greške nije JSON ili je prazno.");
-                    }
-                    if (response.status === 401 || response.status === 403) {
-                        errorMsg += "\nProvjerite je li API ključ ispravan i aktivan, te da li je ispravno unesen kao Bearer token.";
-                    }
+                    try { const errData = await response.json(); errorMsg += ` - ${errData.detail || JSON.stringify(errData)}`; } catch (e) {}
+                    if (response.status === 401 || response.status === 403) { errorMsg += "\nProvjerite API ključ."; }
                     throw new Error(errorMsg);
                 }
-
                 const data = await response.json(); 
-
                 if (data.chains && data.chains.length > 0) {
                     selectTrgovina.innerHTML = '<option value="">-- Izaberi trgovinu --</option>';
                     data.chains.forEach(chainCode => {
@@ -209,252 +257,158 @@
                         option.textContent = mapirajKodLancaUNaziv(chainCode);
                         selectTrgovina.appendChild(option);
                     });
-                    selectTrgovina.disabled = false;
-                    btnPotvrdiTrgovinu.disabled = false;
-                } else {
-                    selectTrgovina.innerHTML = '<option value="">Nema dostupnih trgovina.</option>';
-                }
+                    selectTrgovina.disabled = false; btnPotvrdiTrgovinu.disabled = false;
+                } else { selectTrgovina.innerHTML = '<option value="">Nema dostupnih trgovina.</option>'; }
             } catch (error) {
                 console.error('Problem s dohvaćanjem trgovina:', error);
                 selectTrgovina.innerHTML = `<option value="">Greška pri učitavanju.</option>`;
-                alert(`Nije moguće učitati listu trgovina: ${error.message}\nProvjerite konzolu za detalje.`);
+                alert(`Nije moguće učitati listu trgovina: ${error.message}`);
             }
         }
         
         function izracunajCijenuPoJM(cijenaPakiranjaStr, kolicinaInputStr, jedinicaMjereInput) {
-            console.log("--- Ulaz u izracunajCijenuPoJM ---:", 
-                        "Cijena Pak:", cijenaPakiranjaStr, 
-                        "Količina Ulaz:", kolicinaInputStr,
-                        "Jedinica Ulaz:", jedinicaMjereInput);
-
+            // ... (ova funkcija ostaje ista kao u prethodnom odgovoru, s console.log-ovima)
+            console.log("--- Ulaz u izracunajCijenuPoJM ---:", "Cijena Pak:", cijenaPakiranjaStr, "Količina Ulaz:", kolicinaInputStr, "Jedinica Ulaz:", jedinicaMjereInput);
             const cijenaPakiranja = parseFloat(cijenaPakiranjaStr);
-            
             let kolicinaStrNumerickiDio = kolicinaInputStr;
             if (typeof kolicinaInputStr === 'string') {
                 kolicinaStrNumerickiDio = kolicinaInputStr.replace(',', '.');
                 const match = kolicinaStrNumerickiDio.match(/^[0-9.]+/); 
-                if (match && match[0]) {
-                    kolicinaStrNumerickiDio = match[0];
-                }
+                if (match && match[0]) { kolicinaStrNumerickiDio = match[0]; }
             }
-            
             let kolicina = parseFloat(kolicinaStrNumerickiDio);
             let jedinicaMjere = jedinicaMjereInput;
-
-            console.log("--- Nakon parsiranja u izracunajCijenuPoJM ---:",
-                        "Cijena Pak (broj):", cijenaPakiranja,
-                        "Količina (broj):", kolicina,
-                        "Količina Str Numerički:", kolicinaStrNumerickiDio,
-                        "Jedinica:", jedinicaMjere);
-
+            console.log("--- Nakon parsiranja u izracunajCijenuPoJM ---:", "Cijena Pak (broj):", cijenaPakiranja, "Količina (broj):", kolicina, "Količina Str Numerički:", kolicinaStrNumerickiDio, "Jedinica:", jedinicaMjere);
             if (isNaN(cijenaPakiranja) || isNaN(kolicina) || kolicina === 0 || jedinicaMjere === null || jedinicaMjere === undefined) {
                 console.warn("Neispravni ulazni podaci za izracunajCijenuPoJM ili jedinica nedostaje:", cijenaPakiranjaStr, kolicinaInputStr, jedinicaMjereInput);
                 return "N/A";
             }
-
-            let cijenaPoOsnovnojJM = "";
-            let osnovnaJM = "";
-
+            let cijenaPoOsnovnojJM = ""; let osnovnaJM = "";
             jedinicaMjere = String(jedinicaMjere).toLowerCase();
-
-            if (jedinicaMjere === "kom" || jedinicaMjere === "ko") {
-                return `${cijenaPakiranja.toFixed(2)} EUR/kom`;
-            } else if (jedinicaMjere === "g" || jedinicaMjere === "gr") {
-                cijenaPoOsnovnojJM = ((cijenaPakiranja / kolicina) * 1000).toFixed(2);
-                osnovnaJM = "kg";
-            } else if (jedinicaMjere === "ml") {
-                cijenaPoOsnovnojJM = ((cijenaPakiranja / kolicina) * 1000).toFixed(2);
-                osnovnaJM = "l";
-            } else if (jedinicaMjere === "kg" || jedinicaMjere === "l") {
-                 // Ovdje ne treba posebna provjera za veliko 'L' jer smo već izvukli numerički dio
-                cijenaPoOsnovnojJM = (cijenaPakiranja / kolicina).toFixed(2);
-                osnovnaJM = jedinicaMjere;
-            } else {
-                console.warn("Nepoznata jedinica mjere za izračun:", jedinicaMjere, "Originalni ulaz:", jedinicaMjereInput);
-                return "N/A (nepoznata JM)"; 
-            }
-
-            if (isNaN(parseFloat(cijenaPoOsnovnojJM))) {
-                 console.warn("Rezultat izračuna cijenePoOsnovnojJM je NaN:", cijenaPoOsnovnojJM);
-                 return "N/A (greška u izr.)";
-            }
-
+            if (jedinicaMjere === "kom" || jedinicaMjere === "ko") { return `${cijenaPakiranja.toFixed(2)} EUR/kom`; }
+            else if (jedinicaMjere === "g" || jedinicaMjere === "gr") { cijenaPoOsnovnojJM = ((cijenaPakiranja / kolicina) * 1000).toFixed(2); osnovnaJM = "kg"; }
+            else if (jedinicaMjere === "ml") { cijenaPoOsnovnojJM = ((cijenaPakiranja / kolicina) * 1000).toFixed(2); osnovnaJM = "l"; }
+            else if (jedinicaMjere === "kg" || jedinicaMjere === "l") { cijenaPoOsnovnojJM = (cijenaPakiranja / kolicina).toFixed(2); osnovnaJM = jedinicaMjere; }
+            else { console.warn("Nepoznata jedinica mjere za izračun:", jedinicaMjere, "Originalni ulaz:", jedinicaMjereInput); return "N/A (nepoznata JM)"; }
+            if (isNaN(parseFloat(cijenaPoOsnovnojJM))) { console.warn("Rezultat izračuna cijenePoOsnovnojJM je NaN:", cijenaPoOsnovnojJM); return "N/A (greška u izr.)"; }
             return `${cijenaPoOsnovnojJM} EUR/${osnovnaJM}`;
         }
 
         async function dohvatiPodatkeSkeniranogProizvoda(ean, chainCode) {
+            // ... (ova funkcija ostaje ista kao u prethodnom odgovoru, s console.log-ovima)
             skeniranNazivEl.textContent = `Tražim podatke za EAN: ${ean}...`;
             skeniranaCijenaEl.textContent = "...";
             skeniranaCijenaPoJediniciEl.textContent = "...";
             infoSkeniranogProizvodaContainer.classList.remove('hidden');
             skeniranaKolicinaInput.value = 1;
-
             try {
                 const response = await fetch(`${API_BASE_URL}/v1/products/${ean}/?chains=${chainCode}`, {
                     method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Accept': 'application/json'
-                    }
+                    headers: { 'Authorization': `Bearer ${API_KEY}`, 'Accept': 'application/json' }
                 });
-
                 if (!response.ok) {
                     let errorMsg = `Greška pri dohvaćanju proizvoda (${response.status}): ${response.statusText}`;
-                     if (response.status === 404) {
-                        errorMsg = `Proizvod s EAN ${ean} nije pronađen u trgovini ${mapirajKodLancaUNaziv(chainCode)}.`;
-                    } else {
-                        try { 
-                            const errData = await response.json(); 
-                            errorMsg += ` - ${errData.detail || JSON.stringify(errData)}`; 
-                        } catch (e) {}
-                    }
+                     if (response.status === 404) { errorMsg = `Proizvod s EAN ${ean} nije pronađen u trgovini ${mapirajKodLancaUNaziv(chainCode)}.`; }
+                     else { try { const errData = await response.json(); errorMsg += ` - ${errData.detail || JSON.stringify(errData)}`; } catch (e) {} }
                     throw new Error(errorMsg);
                 }
-
                 const data = await response.json();
                 console.log("--- Ukupni podaci o proizvodu od API-ja ---:", data);
-
                 if (data.chains && data.chains.length > 0) {
                     const productInfo = data.chains[0]; 
                     console.log("--- Sadržaj productInfo (data.chains[0]) ---:", productInfo);
-
-                    const nazivPrikaz = data.name || productInfo.name || "Nepoznat naziv";
+                    const nazivPrikaz = productInfo.name || data.name || "Nepoznat naziv"; // Dajemo prednost nazivu iz lanca
                     skeniranNazivEl.textContent = nazivPrikaz;
-                    
                     if (productInfo.min_price !== undefined && productInfo.min_price !== null) {
                         skeniranaCijenaEl.textContent = parseFloat(productInfo.min_price).toFixed(2);
-                    } else {
-                        skeniranaCijenaEl.textContent = "N/A";
-                        console.warn("min_price nije definiran u productInfo:", productInfo);
-                    }
-                    
-                    console.log("--- Vrijednosti za izračun JM (iz productInfo) ---:", 
-                                "Cijena:", productInfo.min_price, 
-                                "Količina:", productInfo.quantity, 
-                                "Jedinica:", productInfo.unit);
-                    
+                    } else { skeniranaCijenaEl.textContent = "N/A"; console.warn("min_price nije definiran u productInfo:", productInfo); }
+                    console.log("--- Vrijednosti za izračun JM (iz productInfo) ---:", "Cijena:", productInfo.min_price, "Količina:", productInfo.quantity, "Jedinica:", productInfo.unit);
                     const cijenaPoJM = izracunajCijenuPoJM(productInfo.min_price, productInfo.quantity, productInfo.unit);
+                    console.log("--- Rezultat izracunajCijenuPoJM ---:", cijenaPoJM); // DODAN LOG
                     skeniranaCijenaPoJediniciEl.textContent = cijenaPoJM;
-console.log("--- Rezultat izracunajCijenuPoJM ---:", cijenaPoJM);
-skeniranaCijenaPoJediniciEl.textContent = cijenaPoJM; // Ova linija već postoji
                 } else {
                     skeniranNazivEl.textContent = `Proizvod s EAN ${ean} nema podataka za trgovinu ${mapirajKodLancaUNaziv(chainCode)}.`;
-                    skeniranaCijenaEl.textContent = "N/A";
-                    skeniranaCijenaPoJediniciEl.textContent = "N/A";
+                    skeniranaCijenaEl.textContent = "N/A"; skeniranaCijenaPoJediniciEl.textContent = "N/A";
                     console.warn(`API vratio 200 OK, ali nema 'chains' podataka za ${ean} u ${chainCode}`, data);
                 }
-
             } catch (error) {
                 console.error('Problem s dohvaćanjem proizvoda:', error);
                 skeniranNazivEl.textContent = "Greška pri dohvaćanju";
-                skeniranaCijenaEl.textContent = "-";
-                skeniranaCijenaPoJediniciEl.textContent = "-";
+                skeniranaCijenaEl.textContent = "-"; skeniranaCijenaPoJediniciEl.textContent = "-";
                 alert(`Nije moguće učitati podatke o proizvodu: ${error.message}`);
             }
         }
-
 
         // --- FUNKCIJE ZA UI ---
         function azurirajGumbNastavi() {
             if (zadnjeOdabranaTrgovinaKod && zadnjeOdabranaTrgovinaNaziv) {
                 btnNastaviZadnjaTrgovina.textContent = `Nastavi s ${mapirajKodLancaUNaziv(zadnjeOdabranaTrgovinaNaziv)}`;
                 btnNastaviZadnjaTrgovina.classList.remove('hidden');
-            } else {
-                btnNastaviZadnjaTrgovina.classList.add('hidden');
-            }
+            } else { btnNastaviZadnjaTrgovina.classList.add('hidden'); }
         }
 
         function postaviOdabranuTrgovinu(kod, naziv) {
             trenutnoOdabranaTrgovina = { code: kod, name: naziv };
             localStorage.setItem('zadnjaTrgovinaKod', kod);
             localStorage.setItem('zadnjaTrgovinaNaziv', naziv); 
-            zadnjeOdabranaTrgovinaKod = kod;
-            zadnjeOdabranaTrgovinaNaziv = naziv;
+            zadnjeOdabranaTrgovinaKod = kod; zadnjeOdabranaTrgovinaNaziv = naziv;
             azurirajGumbNastavi();
-
             const prikazNazivTrgovine = mapirajKodLancaUNaziv(naziv);
-            infoOdabranaTrgovina.textContent = `Trgovina: ${prikazNazivTrgovine}`;
-            infoTrgovinaSkeniranje.textContent = `Skeniranje za ${prikazNazivTrgovine}`;
+            infoOdabranaTrgovina.textContent = `Trgovina: ${prikazNazivTrgovine}`; // Za glavni ekran
+            if(infoTrgovinaSkeniranjeOverlay) { // Ažuriraj overlay za ekran skeniranja
+                 infoTrgovinaSkeniranjeOverlay.textContent = `Trgovina: ${prikazNazivTrgovine}`;
+            }
             nazivTrgovineZaPretragu.textContent = prikazNazivTrgovine;
         }
 
         // --- EVENT LISTENERI ---
-        btnIzaberiTrgovinu.addEventListener('click', () => {
-            prikaziEkran('ekran-odabir-trgovine');
-            dohvatiITipkajTrgovine();
-        });
-
+        btnIzaberiTrgovinu.addEventListener('click', () => { prikaziEkran('ekran-odabir-trgovine'); dohvatiITipkajTrgovine(); });
         btnNazadNaPocetnuSaOdabira.addEventListener('click', () => prikaziEkran('pocetni-ekran'));
-
         btnPotvrdiTrgovinu.addEventListener('click', () => {
             const odabraniKod = selectTrgovina.value;
-            if (odabraniKod) {
-                postaviOdabranuTrgovinu(odabraniKod, odabraniKod); 
-                prikaziEkran('glavni-ekran-akcija');
-            } else {
-                alert("Molimo odaberite trgovinu.");
-            }
+            if (odabraniKod) { postaviOdabranuTrgovinu(odabraniKod, odabraniKod); prikaziEkran('glavni-ekran-akcija'); } 
+            else { alert("Molimo odaberite trgovinu."); }
         });
-
         btnNastaviZadnjaTrgovina.addEventListener('click', () => {
             if (zadnjeOdabranaTrgovinaKod && zadnjeOdabranaTrgovinaNaziv) {
                 postaviOdabranuTrgovinu(zadnjeOdabranaTrgovinaKod, zadnjeOdabranaTrgovinaNaziv);
                 prikaziEkran('glavni-ekran-akcija');
             }
         });
-        
         btnTraziProizvodePocetna.addEventListener('click', () => {
             if (zadnjeOdabranaTrgovinaKod && zadnjeOdabranaTrgovinaNaziv) {
                 postaviOdabranuTrgovinu(zadnjeOdabranaTrgovinaKod, zadnjeOdabranaTrgovinaNaziv);
                 prikaziEkran('ekran-pretrage-i-liste');
                 document.getElementById('input-pretraga-proizvoda').focus();
-            } else {
-                prikaziEkran('ekran-odabir-trgovine');
-                dohvatiITipkajTrgovine();
-            }
+            } else { prikaziEkran('ekran-odabir-trgovine'); dohvatiITipkajTrgovine(); }
         });
-
-        btnPromijeniTrgovinu.addEventListener('click', () => {
-            prikaziEkran('ekran-odabir-trgovine');
-            dohvatiITipkajTrgovine();
-        });
+        btnPromijeniTrgovinu.addEventListener('click', () => { prikaziEkran('ekran-odabir-trgovine'); dohvatiITipkajTrgovine(); });
 
         btnSkenirajProizvod.addEventListener('click', () => {
             if (!trenutnoOdabranaTrgovina) {
                 alert("Molimo prvo odaberite trgovinu.");
-                prikaziEkran('ekran-odabir-trgovine');
-                dohvatiITipkajTrgovine();
-                return;
+                prikaziEkran('ekran-odabir-trgovine'); dohvatiITipkajTrgovine(); return;
             }
             prikaziEkran('ekran-skeniranja');
-            document.getElementById('status-skenera').textContent = "Kliknite 'Pokreni skener' za aktivaciju kamere.";
-            document.getElementById('info-skeniranog-proizvoda-container').classList.add('hidden');
-            if (html5QrCode && html5QrCode.isScanning) {
-                 stopScanner(); 
+            if(infoTrgovinaSkeniranjeOverlay && trenutnoOdabranaTrgovina) {
+                 infoTrgovinaSkeniranjeOverlay.textContent = `Trgovina: ${mapirajKodLancaUNaziv(trenutnoOdabranaTrgovina.name)}`;
             }
+            statusSkeneraOverlayElement.textContent = "Kliknite 'Pokreni skener' za aktivaciju kamere.";
+            infoSkeniranogProizvodaContainer.classList.add('hidden');
+            if (html5QrCode && html5QrCode.isScanning) { stopScanner(); }
             btnPokreniZaustaviSkener.textContent = "Pokreni skener";
         });
         
         btnPretraziProizvodeGlavni.addEventListener('click', () => {
              if (!trenutnoOdabranaTrgovina) {
                 alert("Molimo prvo odaberite trgovinu.");
-                prikaziEkran('ekran-odabir-trgovine');
-                dohvatiITipkajTrgovine();
-                return;
+                prikaziEkran('ekran-odabir-trgovine'); dohvatiITipkajTrgovine(); return;
             }
             prikaziEkran('ekran-pretrage-i-liste');
             document.getElementById('input-pretraga-proizvoda').focus();
         });
-
-        btnNazadSaSkeniranja.addEventListener('click', () => {
-            stopScanner(); 
-            prikaziEkran('glavni-ekran-akcija');
-        });
-        
-        btnNazadSaPretrageNaAkcije.addEventListener('click', () => {
-            prikaziEkran('glavni-ekran-akcija');
-        });
-
+        btnNazadSaSkeniranja.addEventListener('click', () => { stopScanner(); prikaziEkran('glavni-ekran-akcija'); });
+        btnNazadSaPretrageNaAkcije.addEventListener('click', () => { prikaziEkran('glavni-ekran-akcija'); });
 
         // --- INICIJALIZACIJA APLIKACIJE ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -463,74 +417,51 @@ skeniranaCijenaPoJediniciEl.textContent = cijenaPoJM; // Ova linija već postoji
             prikaziEkran('pocetni-ekran');
         });
 
-
         // --- LOGIKA SKENERA (Html5Qrcode) ---
-        let html5QrCode = null;
-        const qrReaderElement = document.getElementById('qr-reader');
-        const statusSkeneraElement = document.getElementById('status-skenera');
-        const btnPokreniZaustaviSkener = document.getElementById('btn-pokreni-zaustavi-skener');
-        
         function onScanSuccess(decodedText, decodedResult) {
-            console.log(`Kod pronađen: ${decodedText}`, decodedResult); // Ovaj log je već tu
-            statusSkeneraElement.textContent = `Skeniran kod: ${decodedText}`;
+            console.log(`Kod pronađen: ${decodedText}`, decodedResult); 
+            statusSkeneraOverlayElement.textContent = `Skeniran kod: ${decodedText}`; // Koristi novi overlay element
             stopScanner(); 
-
             if (trenutnoOdabranaTrgovina && trenutnoOdabranaTrgovina.code) {
                 dohvatiPodatkeSkeniranogProizvoda(decodedText, trenutnoOdabranaTrgovina.code);
             } else {
-                alert("Nije odabrana trgovina. Molimo odaberite trgovinu prije skeniranja.");
-                prikaziEkran('ekran-odabir-trgovine');
-                dohvatiITipkajTrgovine();
+                alert("Nije odabrana trgovina.");
+                prikaziEkran('ekran-odabir-trgovine'); dohvatiITipkajTrgovine();
             }
         }
-
-        function onScanFailure(error) {
-            // Nema potrebe za logiranjem svake greške
-        }
+        function onScanFailure(error) { /* Ignoriraj */ }
 
         function startScanner() {
             if (!Html5Qrcode) {
-                 statusSkeneraElement.textContent = "Greška: Html5Qrcode biblioteka nije učitana.";
-                 console.error("Html5Qrcode biblioteka nije učitana.");
-                 return;
+                 statusSkeneraOverlayElement.textContent = "Greška: Html5Qrcode biblioteka nije učitana.";
+                 console.error("Html5Qrcode biblioteka nije učitana."); return;
             }
-            
             if (!html5QrCode) { 
-                try {
-                    html5QrCode = new Html5Qrcode("qr-reader");
-                } catch (e) {
-                    console.error("Greška pri inicijalizaciji Html5Qrcode:", e);
-                    statusSkeneraElement.textContent = "Greška: Skener se ne može inicijalizirati.";
-                    return;
-                }
+                try { html5QrCode = new Html5Qrcode("qr-reader"); } 
+                catch (e) { console.error("Greška pri inicijalizaciji Html5Qrcode:", e); statusSkeneraOverlayElement.textContent = "Greška: Skener se ne može inicijalizirati."; return; }
             }
-            
             const config = { 
                 fps: 10, 
                 qrbox: (viewportWidth, viewportHeight) => { 
                     const minEdge = Math.min(viewportWidth, viewportHeight);
-                    const qrboxSize = Math.floor(minEdge * 0.7); 
+                    let qrboxSize = Math.floor(minEdge * 0.7);
+                    if (qrboxSize < 150) qrboxSize = 150; // Minimalna veličina
+                    if (qrboxSize > 300) qrboxSize = 300; // Maksimalna veličina
                     return { width: qrboxSize, height: qrboxSize * 0.6 }; 
                 },
                 rememberLastUsedCamera: true,
                 supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
             };
-            
-            statusSkeneraElement.textContent = "Pokretanje kamere...";
+            statusSkeneraOverlayElement.textContent = "Pokretanje kamere...";
             qrReaderElement.innerHTML = ""; 
-
-            html5QrCode.start(
-                { facingMode: "environment" }, 
-                config,
-                onScanSuccess,
-                onScanFailure
-            ).then(() => {
-                statusSkeneraElement.textContent = "Kamera aktivna. Skenirajte barkod.";
+            html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure)
+            .then(() => {
+                statusSkeneraOverlayElement.textContent = "Kamera aktivna. Skenirajte barkod.";
                 btnPokreniZaustaviSkener.textContent = "Zaustavi skener";
             }).catch(err => {
-                statusSkeneraElement.textContent = "Greška pri pokretanju kamere.";
+                statusSkeneraOverlayElement.textContent = "Greška pri pokretanju kamere.";
                 console.error("Greška pri pokretanju kamere: ", err);
-                alert(`Nije moguće pokrenuti kameru: ${err}. Provjerite dozvole i da stranica koristi HTTPS (osim za localhost).`);
+                alert(`Nije moguće pokrenuti kameru: ${err}. Provjerite dozvole i HTTPS.`);
                 btnPokreniZaustaviSkener.textContent = "Pokreni skener"; 
             });
         }
@@ -539,35 +470,32 @@ skeniranaCijenaPoJediniciEl.textContent = cijenaPoJM; // Ova linija već postoji
             if (html5QrCode && html5QrCode.isScanning) {
                 html5QrCode.stop()
                 .then(ignore => {
-                    statusSkeneraElement.textContent = "Skener zaustavljen. Kliknite 'Pokreni skener' za ponovno aktiviranje.";
+                    statusSkeneraOverlayElement.textContent = "Skener zaustavljen. Kliknite 'Pokreni skener' za ponovno aktiviranje.";
                     btnPokreniZaustaviSkener.textContent = "Pokreni skener";
-                    console.log("Skener zaustavljen."); // Ovaj log je već tu
+                    console.log("Skener zaustavljen."); 
                     qrReaderElement.innerHTML = ""; 
                 })
                 .catch(err => {
                     console.error("Greška pri zaustavljanju skenera: ", err);
-                    statusSkeneraElement.textContent = "Greška pri zaustavljanju skenera.";
+                    statusSkeneraOverlayElement.textContent = "Greška pri zaustavljanju skenera.";
                     btnPokreniZaustaviSkener.textContent = "Pokreni skener";
                 });
             } else {
-                 statusSkeneraElement.textContent = "Skener nije aktivan. Kliknite 'Pokreni skener'.";
+                 statusSkeneraOverlayElement.textContent = "Skener nije aktivan. Kliknite 'Pokreni skener'.";
                  btnPokreniZaustaviSkener.textContent = "Pokreni skener";
                  if (qrReaderElement) qrReaderElement.innerHTML = ""; 
             }
         }
 
         btnPokreniZaustaviSkener.addEventListener('click', () => {
-            if (html5QrCode && html5QrCode.isScanning) {
-                stopScanner();
-            } else {
+            if (html5QrCode && html5QrCode.isScanning) { stopScanner(); } 
+            else {
                 if (document.getElementById('ekran-skeniranja').classList.contains('hidden')) {
-                    alert("Molimo prvo idite na ekran za skeniranje.");
-                    return;
+                    alert("Molimo prvo idite na ekran za skeniranje."); return;
                 }
                 startScanner();
             }
         });
-        
     </script>
 </body>
 </html>
