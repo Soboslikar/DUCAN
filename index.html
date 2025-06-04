@@ -4,55 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DUĆAN SKENER</title>
-    <!-- Link na html5-qrcode biblioteku preko CDN-a -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <style>
         body { font-family: sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-color: #f4f4f4; }
         header, footer { background-color: #333; color: white; padding: 1em; text-align: center; width: 100%; }
         main { padding: 20px; background-color: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-top: 20px; width: 90%; max-width: 600px; }
         h1, h2, h3 { color: #333; }
-        button {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 10px;
-            font-size: 16px;
-            color: white;
-            background-color: #007bff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+        button { display: block; width: 100%; padding: 15px; margin-bottom: 10px; font-size: 16px; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; }
         button:hover { background-color: #0056b3; }
         #btn-nastavi-zadnja-trgovina { background-color: #28a745; }
         #btn-nastavi-zadnja-trgovina:hover { background-color: #1e7e34; }
         #btn-povijest { background-color: #6c757d; }
         #btn-povijest:hover { background-color: #545b62; }
+        select { width:100%; padding:10px; margin-bottom:10px; font-size: 16px; }
+        input[type="text"], input[type="number"] { width: calc(100% - 22px); padding: 10px; margin-bottom: 10px; font-size:16px; border: 1px solid #ccc; border-radius: 4px;}
+
 
         .hidden { display: none; }
 
-        /* Stilovi za skener i listu */
-        #qr-reader {
-            width: 100%;
-            /* max-width: 500px; */ /* Prilagodi po potrebi */
-            border: 1px solid #ccc;
-            margin-bottom: 15px;
+        #qr-reader { width: 100%; border: 1px solid #ccc; margin-bottom: 15px; }
+        #skenirani-proizvodi-lista-container, #info-skeniranog-proizvoda-container, #rezultati-pretrage-proizvoda, #lista-proizvoda-pretraga {
+            border: 1px solid #eee; padding: 10px; margin-bottom: 15px; background-color: #f9f9f9; min-height: 50px;
         }
-        #skenirani-proizvodi-lista-container, #info-skeniranog-proizvoda-container {
-            border: 1px solid #eee;
-            padding: 10px;
-            margin-bottom: 15px;
-            background-color: #f9f9f9;
-        }
-        .proizvod-na-listi {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 0;
-            border-bottom: 1px dotted #ddd;
-        }
-        .proizvod-na-listi:last-child {
-            border-bottom: none;
-        }
+        .proizvod-na-listi { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dotted #ddd; }
+        .proizvod-na-listi:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
@@ -74,10 +49,10 @@
         <!-- Ekran 2: Odabir trgovine -->
         <section id="ekran-odabir-trgovine" class="hidden">
             <h2>Odaberi trgovinu:</h2>
-            <select id="select-trgovina" style="width:100%; padding:10px; margin-bottom:10px;">
+            <select id="select-trgovina">
                 <option value="">Učitavanje trgovina...</option>
             </select>
-            <button id="btn-potvrdi-trgovinu">Potvrdi odabir</button>
+            <button id="btn-potvrdi-trgovinu" disabled>Potvrdi odabir</button>
             <button id="btn-nazad-na-pocetnu-sa-odabira">Nazad</button>
         </section>
 
@@ -92,25 +67,16 @@
         <!-- Ekran 4: Ekran skeniranja -->
         <section id="ekran-skeniranja" class="hidden">
             <h2 id="info-trgovina-skeniranje">Skeniranje za [Naziv Trgovine]</h2>
-
             <div id="skenirani-proizvodi-lista-container">
                 <h3>Moja lista:</h3>
-                <div id="skenirani-proizvodi-lista">
-                    <!-- Primjer stavke na listi (ovo će se dinamički generirati) -->
-                    <!--
-                    <div class="proizvod-na-listi">
-                        <span>Keksi Mini (1kom)</span>
-                        <span>2.59 EUR</span>
-                    </div>
-                    -->
-                </div>
+                <div id="skenirani-proizvodi-lista"></div>
                 <p><strong>Ukupno: <span id="ukupno-cijena-skeniranje">0.00</span> EUR</strong></p>
             </div>
-
-            <div id="qr-reader"></div>
+            <div id="qr-reader-container" style="position: relative;">
+                 <div id="qr-reader" style="width:100%;"></div>
+            </div>
             <p id="status-skenera" style="text-align: center; margin-top: 5px;">Usmjerite kameru prema barkodu.</p>
-
-            <div id="info-skeniranog-proizvoda-container" class="hidden"> <!-- Početno skriven, prikazuje se nakon skeniranja -->
+            <div id="info-skeniranog-proizvoda-container" class="hidden">
                 <h3>Skenirani proizvod:</h3>
                 <p><strong>Naziv:</strong> <span id="skeniran-naziv"></span></p>
                 <p><strong>Cijena:</strong> <span id="skenirana-cijena"></span> EUR</p>
@@ -121,28 +87,21 @@
                 </div>
                 <button id="btn-dodaj-skenirano-na-listu" style="margin-top:10px;">Dodaj na listu</button>
             </div>
-            <button id="btn-zaustavi-skener" class="hidden">Zaustavi skener</button> <!-- Za ručno zaustavljanje ako treba -->
+            <button id="btn-pokreni-zaustavi-skener">Pokreni skener</button>
             <button id="btn-nazad-sa-skeniranja">Nazad na akcije</button>
         </section>
 
         <!-- Ekran 5: Ekran pretraživanja i liste -->
         <section id="ekran-pretrage-i-liste" class="hidden">
             <h2>Pretraga proizvoda u <span id="naziv-trgovine-za-pretragu">[Naziv Trgovine]</span></h2>
-            <input type="text" id="input-pretraga-proizvoda" placeholder="Unesi naziv proizvoda..." style="width: calc(100% - 22px); padding: 10px; margin-bottom: 10px;">
-            <div id="rezultati-pretrage-proizvoda">
-                <!-- Rezultati pretrage -->
-            </div>
+            <input type="text" id="input-pretraga-proizvoda" placeholder="Unesi naziv proizvoda...">
+            <div id="rezultati-pretrage-proizvoda"></div>
             <h3>Moja Lista:</h3>
-            <div id="lista-proizvoda-pretraga">
-                <!-- Lista dodanih proizvoda -->
-            </div>
+            <div id="lista-proizvoda-pretraga"></div>
             <p><strong>Ukupno: <span id="ukupno-cijena-pretraga">0.00</span> EUR</strong></p>
             <button id="btn-usporedi-cijene-sa-pretrage">Usporedi cijene liste</button>
-            <button id="btn-nazad-sa-pretrage">Nazad na akcije</button>
+            <button id="btn-nazad-sa-pretrage-na-akcije">Nazad na akcije</button>
         </section>
-
-        <!-- Ostali ekrani će doći kasnije (Povijest, Usporedba...) -->
-
     </main>
 
     <footer>
@@ -150,112 +109,319 @@
     </footer>
 
     <script>
-        document.getElementById('trenutna-godina').textContent = new Date().getFullYear();
+        // --- KONSTANTE ---
+        const API_BASE_URL = "https://api.cijene.dev";
+        const API_KEY = "mee5xooThuithei4ees4bae3emos3ook"; // TVOJ API KLJUČ
 
-        // Ovdje će ići ostatak JavaScript logike u app.js
-        // Primjer inicijalizacije skenera (konceptualno, stvarna implementacija će biti u app.js)
+        // --- DOM ELEMENTI ---
+        const pocetniEkran = document.getElementById('pocetni-ekran');
+        const ekranOdabirTrgovine = document.getElementById('ekran-odabir-trgovine');
+        const glavniEkranAkcija = document.getElementById('glavni-ekran-akcija');
+        const ekranSkeniranja = document.getElementById('ekran-skeniranja');
+        const ekranPretrageIListe = document.getElementById('ekran-pretrage-i-liste');
 
-        // Globalna varijabla za instancu skenera
-        // let html5QrCodeScanner = null;
+        const btnIzaberiTrgovinu = document.getElementById('btn-izaberi-trgovinu');
+        const btnTraziProizvodePocetna = document.getElementById('btn-trazi-proizvode-pocetna');
+        const btnNastaviZadnjaTrgovina = document.getElementById('btn-nastavi-zadnja-trgovina');
+        // const btnPovijest = document.getElementById('btn-povijest'); // Ako ćemo ga koristiti
 
-        // Funkcija za pokretanje skeniranja
-        // function startBarcodeScanner() {
-        //     if (!Html5Qrcode) {
-        //         console.error("Html5Qrcode biblioteka nije učitana!");
-        //         document.getElementById('status-skenera').textContent = "Greška: Skener biblioteka nije dostupna.";
-        //         return;
-        //     }
+        const selectTrgovina = document.getElementById('select-trgovina');
+        const btnPotvrdiTrgovinu = document.getElementById('btn-potvrdi-trgovinu');
+        const btnNazadNaPocetnuSaOdabira = document.getElementById('btn-nazad-na-pocetnu-sa-odabira');
 
-        //     const readerElement = document.getElementById('qr-reader');
-        //     if (!readerElement) {
-        //         console.error("Element 'qr-reader' nije pronađen!");
-        //         return;
-        //     }
-             // Čisti prethodni sadržaj ako postoji
-        //     readerElement.innerHTML = '';
+        const infoOdabranaTrgovina = document.getElementById('info-odabrana-trgovina');
+        const btnSkenirajProizvod = document.getElementById('btn-skeniraj-proizvod');
+        const btnPretraziProizvodeGlavni = document.getElementById('btn-pretrazi-proizvode-glavni');
+        const btnPromijeniTrgovinu = document.getElementById('btn-promijeni-trgovinu');
+
+        const infoTrgovinaSkeniranje = document.getElementById('info-trgovina-skeniranje');
+        const nazivTrgovineZaPretragu = document.getElementById('naziv-trgovine-za-pretragu');
+        const btnNazadSaSkeniranja = document.getElementById('btn-nazad-sa-skeniranja');
+        const btnNazadSaPretrageNaAkcije = document.getElementById('btn-nazad-sa-pretrage-na-akcije');
 
 
-        //     html5QrCodeScanner = new Html5Qrcode("qr-reader");
-        //     const config = {
-        //         fps: 10,
-        //         qrbox: { width: 250, height: 150 }, // Pravokutnik za ciljanje, možeš prilagoditi
-        //         rememberLastUsedCamera: true,
-        //         supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA] // Samo kamera
-        //         // Možeš dodati i formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13] za optimizaciju
-        //     };
+        // --- STANJE APLIKACIJE ---
+        let trenutnoOdabranaTrgovina = null; // { code: 'konzum', name: 'Konzum' }
+        let zadnjeOdabranaTrgovinaKod = localStorage.getItem('zadnjaTrgovinaKod');
+        let zadnjeOdabranaTrgovinaNaziv = localStorage.getItem('zadnjaTrgovinaNaziv');
 
-        //     const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-        //         console.log(`Skenirani kod: ${decodedText}`, decodedResult);
-        //         document.getElementById('status-skenera').textContent = `Skeniran kod: ${decodedText}`;
-                
-        //         // Ovdje ide logika za dohvat podataka o proizvodu s API-ja koristeći decodedText (EAN)
-        //         // Prikaz informacija u #info-skeniranog-proizvoda-container
-        //         document.getElementById('info-skeniranog-proizvoda-container').classList.remove('hidden');
-        //         document.getElementById('skeniran-naziv').textContent = "Testni Proizvod"; // Zamijeniti s API podacima
-        //         document.getElementById('skenirana-cijena').textContent = "9.99";      // Zamijeniti s API podacima
+        // --- FUNKCIJE ZA NAVIGACIJU ---
+        function prikaziEkran(ekranId) {
+            [pocetniEkran, ekranOdabirTrgovine, glavniEkranAkcija, ekranSkeniranja, ekranPretrageIListe].forEach(ekran => {
+                if (ekran && ekran.id === ekranId) ekran.classList.remove('hidden');
+                else if (ekran) ekran.classList.add('hidden');
+            });
+        }
 
-        //         // Zaustavi skener nakon uspješnog skeniranja da korisnik može unijeti količinu
-        //         stopBarcodeScanner();
-        //         document.getElementById('btn-zaustavi-skener').classList.add('hidden');
+        // --- FUNKCIJE ZA API I PODATKE ---
+        function mapirajKodLancaUNaziv(kod) {
+            if (!kod) return "Nepoznato";
+            // Jednostavno mapiranje, može se proširiti za ljepša imena
+            const imena = {
+                "konzum": "Konzum", "lidl": "Lidl", "spar": "Spar", "plodine": "Plodine",
+                "kaufland": "Kaufland", "tommy": "Tommy", "studenac": "Studenac",
+                "eurospin": "Eurospin", "dm": "dm", "ktc": "KTC", "metro": "Metro",
+                "trgocentar": "Trgocentar", "zabac": "Žabac", "vrutak": "Vrutak",
+                "ribola": "Ribola", "ntl": "NTL"
+                // Dodaj ostale po potrebi
+            };
+            return imena[kod.toLowerCase()] || (kod.charAt(0).toUpperCase() + kod.slice(1));
+        }
 
-        //     };
+        async function dohvatiITipkajTrgovine() {
+            selectTrgovina.innerHTML = '<option value="">Učitavanje trgovina...</option>';
+            selectTrgovina.disabled = true;
+            btnPotvrdiTrgovinu.disabled = true;
 
-        //     const qrCodeErrorCallback = (errorMessage) => {
-        //         // Ova se funkcija poziva često ako barkod nije u vidokrugu ili nije jasan
-        //         // Možeš je ostaviti praznom ili logirati samo povremeno
-        //         // console.warn(`Greška pri skeniranju: ${errorMessage}`);
-        //     };
+            try {
+                const response = await fetch(`${API_BASE_URL}/v1/chains/`, {
+                    method: 'GET',
+                    headers: {
+                        'X-API-Key': API_KEY, // Šaljemo API ključ u headeru
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    let errorMsg = `Greška ${response.status}: ${response.statusText}`;
+                    try { const errData = await response.json(); errorMsg += ` - ${errData.detail || JSON.stringify(errData)}`; } catch (e) {}
+                    throw new Error(errorMsg);
+                }
+
+                const data = await response.json(); // Očekujemo: { "chains": ["konzum", "lidl", ...] }
+
+                if (data.chains && data.chains.length > 0) {
+                    selectTrgovina.innerHTML = '<option value="">-- Izaberi trgovinu --</option>';
+                    data.chains.forEach(chainCode => {
+                        const option = document.createElement('option');
+                        option.value = chainCode;
+                        option.textContent = mapirajKodLancaUNaziv(chainCode);
+                        selectTrgovina.appendChild(option);
+                    });
+                    selectTrgovina.disabled = false;
+                    btnPotvrdiTrgovinu.disabled = false;
+                } else {
+                    selectTrgovina.innerHTML = '<option value="">Nema dostupnih trgovina.</option>';
+                }
+            } catch (error) {
+                console.error('Problem s dohvaćanjem trgovina:', error);
+                selectTrgovina.innerHTML = `<option value="">Greška pri učitavanju.</option>`;
+                alert(`Nije moguće učitati listu trgovina: ${error.message}\nProvjerite konzolu za detalje. Mogući problem s CORS-om ako testirate lokalno bez servera.`);
+            }
+        }
+
+        // --- FUNKCIJE ZA UI ---
+        function azurirajGumbNastavi() {
+            if (zadnjeOdabranaTrgovinaKod && zadnjeOdabranaTrgovinaNaziv) {
+                btnNastaviZadnjaTrgovina.textContent = `Nastavi s ${mapirajKodLancaUNaziv(zadnjeOdabranaTrgovinaNaziv)}`; // Koristi mapirano ime
+                btnNastaviZadnjaTrgovina.classList.remove('hidden');
+            } else {
+                btnNastaviZadnjaTrgovina.classList.add('hidden');
+            }
+        }
+
+        function postaviOdabranuTrgovinu(kod, naziv) {
+            trenutnoOdabranaTrgovina = { code: kod, name: naziv };
+            localStorage.setItem('zadnjaTrgovinaKod', kod);
+            localStorage.setItem('zadnjaTrgovinaNaziv', naziv); // Spremaj originalni kod ili mapirani naziv, ovisno što je lakše za dohvat kasnije
+            zadnjeOdabranaTrgovinaKod = kod;
+            zadnjeOdabranaTrgovinaNaziv = naziv; // Pohranjujemo originalni kod kao "naziv" za dohvat iz localstorage-a
+            azurirajGumbNastavi();
+
+            const prikazNazivTrgovine = mapirajKodLancaUNaziv(naziv);
+            infoOdabranaTrgovina.textContent = `Trgovina: ${prikazNazivTrgovine}`;
+            infoTrgovinaSkeniranje.textContent = `Skeniranje za ${prikazNazivTrgovine}`;
+            nazivTrgovineZaPretragu.textContent = prikazNazivTrgovine;
+        }
+
+        // --- EVENT LISTENERI ---
+        btnIzaberiTrgovinu.addEventListener('click', () => {
+            prikaziEkran('ekran-odabir-trgovine');
+            dohvatiITipkajTrgovine();
+        });
+
+        btnNazadNaPocetnuSaOdabira.addEventListener('click', () => prikaziEkran('pocetni-ekran'));
+
+        btnPotvrdiTrgovinu.addEventListener('click', () => {
+            const odabraniKod = selectTrgovina.value;
+            if (odabraniKod) {
+                postaviOdabranuTrgovinu(odabraniKod, odabraniKod); // Koristimo kod i za "naziv" jer mapiranje radimo pri prikazu
+                prikaziEkran('glavni-ekran-akcija');
+            } else {
+                alert("Molimo odaberite trgovinu.");
+            }
+        });
+
+        btnNastaviZadnjaTrgovina.addEventListener('click', () => {
+            if (zadnjeOdabranaTrgovinaKod && zadnjeOdabranaTrgovinaNaziv) {
+                postaviOdabranuTrgovinu(zadnjeOdabranaTrgovinaKod, zadnjeOdabranaTrgovinaNaziv);
+                prikaziEkran('glavni-ekran-akcija');
+            }
+        });
+        
+        btnTraziProizvodePocetna.addEventListener('click', () => {
+            if (zadnjeOdabranaTrgovinaKod && zadnjeOdabranaTrgovinaNaziv) {
+                postaviOdabranuTrgovinu(zadnjeOdabranaTrgovinaKod, zadnjeOdabranaTrgovinaNaziv);
+                prikaziEkran('ekran-pretrage-i-liste');
+                // Ovdje bi se mogla inicijalizirati lista ili fokusirati input za pretragu
+                document.getElementById('input-pretraga-proizvoda').focus();
+            } else {
+                // Ako nema zadnje trgovine, vodi na odabir, ali s namjerom da se nakon toga ide na pretragu
+                // Za sada, najjednostavnije je ići na odabir, pa korisnik ručno klikne na pretragu
+                // Ovo možemo kasnije unaprijediti da "pamti" namjeru
+                prikaziEkran('ekran-odabir-trgovine');
+                dohvatiITipkajTrgovine();
+                // Možemo postaviti neki flag da znamo da nakon odabira treba ići na pretragu
+                // localStorage.setItem('namjeraNakonOdabira', 'pretraga');
+            }
+        });
+
+        btnPromijeniTrgovinu.addEventListener('click', () => {
+            prikaziEkran('ekran-odabir-trgovine');
+            dohvatiITipkajTrgovine();
+        });
+
+        btnSkenirajProizvod.addEventListener('click', () => {
+            if (!trenutnoOdabranaTrgovina) {
+                alert("Molimo prvo odaberite trgovinu.");
+                prikaziEkran('ekran-odabir-trgovine');
+                dohvatiITipkajTrgovine();
+                return;
+            }
+            prikaziEkran('ekran-skeniranja');
+            // Ovdje će ići poziv za startBarcodeScanner();
+            // Za sada, simulirajmo
+            document.getElementById('status-skenera').textContent = "Kliknite 'Pokreni skener' za aktivaciju kamere.";
+            document.getElementById('info-skeniranog-proizvoda-container').classList.add('hidden');
+        });
+        
+        btnPretraziProizvodeGlavni.addEventListener('click', () => {
+             if (!trenutnoOdabranaTrgovina) {
+                alert("Molimo prvo odaberite trgovinu.");
+                prikaziEkran('ekran-odabir-trgovine');
+                dohvatiITipkajTrgovine();
+                return;
+            }
+            prikaziEkran('ekran-pretrage-i-liste');
+            document.getElementById('input-pretraga-proizvoda').focus();
+        });
+
+        btnNazadSaSkeniranja.addEventListener('click', () => {
+            // Ovdje ide stopBarcodeScanner();
+            prikaziEkran('glavni-ekran-akcija');
+        });
+        
+        btnNazadSaPretrageNaAkcije.addEventListener('click', () => {
+            prikaziEkran('glavni-ekran-akcija');
+        });
+
+
+        // --- INICIJALIZACIJA APLIKACIJE ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('trenutna-godina').textContent = new Date().getFullYear();
+            azurirajGumbNastavi();
+            prikaziEkran('pocetni-ekran');
+        });
+
+
+        // --- LOGIKA SKENERA (Html5Qrcode) ---
+        // (Ovaj dio je uglavnom placeholder i treba ga detaljnije implementirati i testirati)
+        let html5QrCode = null;
+        const qrReaderElement = document.getElementById('qr-reader');
+        const statusSkeneraElement = document.getElementById('status-skenera');
+        const btnPokreniZaustaviSkener = document.getElementById('btn-pokreni-zaustavi-skener');
+        const infoSkeniranogProizvodaContainer = document.getElementById('info-skeniranog-proizvoda-container');
+        const skeniranNazivEl = document.getElementById('skeniran-naziv');
+        const skeniranaCijenaEl = document.getElementById('skenirana-cijena');
+        // ... ostali elementi za prikaz skeniranog proizvoda
+
+        function onScanSuccess(decodedText, decodedResult) {
+            console.log(`Kod pronađen: ${decodedText}`, decodedResult);
+            statusSkeneraElement.textContent = `Skeniran kod: ${decodedText}`;
+            stopScanner(); // Zaustavi nakon uspješnog skeniranja
+
+            // TODO: Pozovi API da dohvatiš podatke o proizvodu s EAN-om decodedText
+            // Npr. dohvatiProizvodPoEAN(decodedText, trenutnoOdabranaTrgovina.code);
+            // Za sada, samo prikaži dummy podatke:
+            skeniranNazivEl.textContent = `Proizvod s EAN: ${decodedText}`;
+            skeniranaCijenaEl.textContent = `(Tražim cijenu...)`;
+            infoSkeniranogProizvodaContainer.classList.remove('hidden');
+            // Nakon što API vrati podatke, popuni stvarna polja
+        }
+
+        function onScanFailure(error) {
+            // Ignoriraj, poziva se često ako barkod nije u vidokrugu
+            // console.warn(`Greška pri skeniranju: ${error}`);
+        }
+
+        function startScanner() {
+            if (!Html5Qrcode) {
+                 statusSkeneraElement.textContent = "Greška: Html5Qrcode biblioteka nije učitana.";
+                 console.error("Html5Qrcode biblioteka nije učitana.");
+                 return;
+            }
+            // Ako je element već inicijaliziran, nemoj ponovo
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode("qr-reader");
+            }
             
-        //     document.getElementById('status-skenera').textContent = "Pokretanje kamere...";
-        //     html5QrCodeScanner.start({ facingMode: "environment" }, config, qrCodeSuccessCallback, qrCodeErrorCallback)
-        //         .then(() => {
-        //             document.getElementById('status-skenera').textContent = "Kamera aktivna. Skenirajte barkod.";
-        //             document.getElementById('btn-zaustavi-skener').classList.remove('hidden');
-        //         })
-        //         .catch(err => {
-        //             console.error("Greška pri pokretanju skenera: ", err);
-        //             document.getElementById('status-skenera').textContent = "Greška pri pokretanju kamere. Provjerite dozvole.";
-        //             alert("Nije moguće pokrenuti kameru. Provjerite dozvole (HTTPS je potreban za kameru online).");
-        //         });
-        // }
+            const config = { 
+                fps: 10, 
+                qrbox: { width: 250, height: 150 },
+                rememberLastUsedCamera: true,
+                supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
+            };
+            
+            statusSkeneraElement.textContent = "Pokretanje kamere...";
+            qrReaderElement.innerHTML = ""; // Osiguraj da je prazan prije starta
 
-        // Funkcija za zaustavljanje skeniranja
-        // function stopBarcodeScanner() {
-        //     if (html5QrCodeScanner && html5QrCodeScanner.isScanning) {
-        //         html5QrCodeScanner.stop()
-        //             .then(ignore => {
-        //                 console.log("Skener zaustavljen.");
-        //                 document.getElementById('status-skenera').textContent = "Skener zaustavljen.";
-        //                 document.getElementById('btn-zaustavi-skener').classList.add('hidden');
-        //                 // Očisti video element ako je potrebno
-        //                 const readerElement = document.getElementById('qr-reader');
-        //                 if(readerElement) readerElement.innerHTML = '';
-        //             })
-        //             .catch(err => {
-        //                 console.error("Greška pri zaustavljanju skenera: ", err);
-        //             });
-        //     }
-        // }
+            html5QrCode.start(
+                { facingMode: "environment" }, // Preferiraj stražnju kameru
+                config,
+                onScanSuccess,
+                onScanFailure
+            ).then(() => {
+                statusSkeneraElement.textContent = "Kamera aktivna. Skenirajte barkod.";
+                btnPokreniZaustaviSkener.textContent = "Zaustavi skener";
+            }).catch(err => {
+                statusSkeneraElement.textContent = "Greška pri pokretanju kamere.";
+                console.error("Greška pri pokretanju kamere: ", err);
+                alert(`Nije moguće pokrenuti kameru: ${err}. Provjerite dozvole i da stranica koristi HTTPS (osim za localhost).`);
+            });
+        }
 
-        // Gumb za pokretanje skenera (primjer, bit će povezan s gumbom "Skeniraj proizvod")
-        // document.getElementById('btn-skeniraj-proizvod').addEventListener('click', () => {
-        //     // Pokaži ekran skeniranja
-        //     // document.getElementById('glavni-ekran-akcija').classList.add('hidden');
-        //     // document.getElementById('ekran-skeniranja').classList.remove('hidden');
-        //     // startBarcodeScanner();
-        // });
+        function stopScanner() {
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop()
+                .then(ignore => {
+                    statusSkeneraElement.textContent = "Skener zaustavljen. Kliknite 'Pokreni skener' za ponovno aktiviranje.";
+                    btnPokreniZaustaviSkener.textContent = "Pokreni skener";
+                    console.log("Skener zaustavljen.");
+                })
+                .catch(err => {
+                    console.error("Greška pri zaustavljanju skenera: ", err);
+                    statusSkeneraElement.textContent = "Greška pri zaustavljanju skenera.";
+                });
+            } else if (html5QrCode && !html5QrCode.isScanning) {
+                 // Ako nije bio aktivan, samo ažuriraj poruku
+                 statusSkeneraElement.textContent = "Skener nije aktivan. Kliknite 'Pokreni skener'.";
+                 btnPokreniZaustaviSkener.textContent = "Pokreni skener";
+            }
+        }
 
-        // Gumb za zaustavljanje skenera
-        // document.getElementById('btn-zaustavi-skener').addEventListener('click', () => {
-        //      stopBarcodeScanner();
-        // });
-
-         // Gumb za povratak sa skeniranja
-        // document.getElementById('btn-nazad-sa-skeniranja').addEventListener('click', () => {
-             // stopBarcodeScanner(); // Obavezno zaustavi kameru prije promjene ekrana
-             // document.getElementById('ekran-skeniranja').classList.add('hidden');
-             // document.getElementById('glavni-ekran-akcija').classList.remove('hidden'); // Vrati na prethodni ekran
-        // });
+        btnPokreniZaustaviSkener.addEventListener('click', () => {
+            if (html5QrCode && html5QrCode.isScanning) {
+                stopScanner();
+            } else {
+                startScanner();
+            }
+        });
+        
+        // Osiguraj da se skener zaustavi kod napuštanja ekrana
+        btnNazadSaSkeniranja.addEventListener('click', () => {
+            stopScanner();
+            prikaziEkran('glavni-ekran-akcija');
+        });
 
     </script>
 </body>
