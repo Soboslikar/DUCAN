@@ -335,7 +335,8 @@
                     
                     const cijenaPoJM = izracunajCijenuPoJM(productInfo.min_price, productInfo.quantity, productInfo.unit);
                     skeniranaCijenaPoJediniciEl.textContent = cijenaPoJM;
-
+console.log("--- Rezultat izracunajCijenuPoJM ---:", cijenaPoJM);
+skeniranaCijenaPoJediniciEl.textContent = cijenaPoJM; // Ova linija već postoji
                 } else {
                     skeniranNazivEl.textContent = `Proizvod s EAN ${ean} nema podataka za trgovinu ${mapirajKodLancaUNaziv(chainCode)}.`;
                     skeniranaCijenaEl.textContent = "N/A";
