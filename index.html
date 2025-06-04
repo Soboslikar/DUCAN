@@ -8,7 +8,7 @@
     <style>
         body { font-family: sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-color: #f4f4f4; }
         header, footer { background-color: #333; color: white; padding: 1em; text-align: center; width: 100%; }
-        main { padding: 20px; background-color: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-top: 20px; width: 90%; max-width: 600px; }
+        main { padding: 10px; /* Smanjen padding da se bolje vidi na manjim ekranima */ background-color: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-top: 10px; width: 95%; max-width: 600px; }
         h1, h2, h3 { color: #333; }
         button { display: block; width: 100%; padding: 15px; margin-bottom: 10px; font-size: 16px; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; }
         button:hover { background-color: #0056b3; }
@@ -21,59 +21,60 @@
 
         .hidden { display: none; }
 
-        /* Stilovi za novi raspored ekrana skeniranja */
+        /* Stilovi inspirirani QR Računatorom za ekran skeniranja */
         #qr-reader-wrapper {
-            position: relative; 
+            position: relative; /* Omogućava apsolutno pozicioniranje djece */
             width: 100%;
-            background-color: #000; /* Crna pozadina je OK kao fallback */
-            /* Uklonili smo min-height da vidimo hoće li video sam odrediti visinu. */
-            overflow: hidden;
-            /* Možemo probati s fiksnim aspect-ratio ako želimo konzistentnu visinu
-               u odnosu na širinu, npr. za 16:9 video: */
-            /* aspect-ratio: 16 / 9; */
+            height: 50vh; /* Fiksna visina, slično kao QR Računator (55vh) - PRILAGODI PO POTREBI */
+            max-height: 400px; /* Ograničenje maksimalne visine */
+            background-color: #000; /* Crna pozadina dok se kamera ne učita ili ako je greška */
+            margin-bottom: 15px; /* Razmak ispod skenera */
+            border: 1px solid #ccc; /* Vidljivi rub kao kod QR Računatora */
+            overflow: hidden; /* Da sadržaj (video) ne curi van */
         }
 
         #qr-reader { 
-            position: absolute;
-            top: 0;
-            left: 0;
+            /* Ovaj div je kontejner za html5-qrcode.
+               Ne treba mu position:absolute ako je wrapper relative,
+               ali moramo osigurati da se on i video u njemu rastegnu. */
             width: 100%;
             height: 100%; 
-            z-index: 1; 
         }
 
         #qr-reader video { 
             display: block; 
             width: 100%;   
             height: 100%; 
-            object-fit: cover; 
+            object-fit: cover; /* Osigurava da video popuni kontejner, može odrezati rubove */
         }
         
         /* Ciljamo prvi div unutar #qr-reader kojeg često kreira html5-qrcode */
         #qr-reader > div:first-child { 
             width: 100% !important; 
             height: 100% !important;
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
+            display: flex !important; /* Osiguraj flex da se video rastegne */
+            align-items: center !important; 
+            justify-content: center !important; 
         }
+        /* Ako html5-qrcode kreira video direktno unutar #qr-reader, gornje pravilo za div:first-child neće naštetiti */
+
 
         #skener-overlay-gornji {
-            position: absolute;
+            position: absolute; /* Preko #qr-reader-wrapper */
             top: 0;
             left: 0;
             width: 100%;
             padding: 10px; 
             box-sizing: border-box;
-            z-index: 2; 
-            background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.0) 100%); 
-            pointer-events: none; 
+            z-index: 10; /* Iznad videa */
+            background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.0) 100%); 
+            pointer-events: none; /* Da klikovi prolaze na skener ako treba */
         }
 
         #info-trgovina-skeniranje-overlay, #status-skenera-overlay {
             color: white;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.8); 
-            pointer-events: auto; 
+            pointer-events: auto; /* Omogući interakciju sa samim tekstom */
         }
 
         #info-trgovina-skeniranje-overlay {
@@ -88,8 +89,7 @@
         }
         
         #sadrzaj-ispod-skenera {
-            margin-top: 0; 
-            padding: 10px; 
+            padding: 0; /* Nema više potrebe za paddingom ovdje ako je `main` smanjen */
             width: 100%; 
             box-sizing: border-box;
         }
@@ -137,9 +137,10 @@
 
         <!-- Ekran 4: Ekran skeniranja (novi raspored) -->
         <section id="ekran-skeniranja" class="hidden">
-            <div id="qr-reader-wrapper">
-                <div id="qr-reader"></div> 
-                <div id="skener-overlay-gornji">
+            <div id="qr-reader-wrapper"> <!-- Roditeljski kontejner za skener i overlay -->
+                <div id="qr-reader"></div> <!-- Kontejner gdje html5-qrcode renderira video -->
+                
+                <div id="skener-overlay-gornji"> <!-- Overlay koji ide preko videa -->
                     <h2 id="info-trgovina-skeniranje-overlay">Trgovina: [Naziv Trgovine]</h2>
                     <p id="status-skenera-overlay">Pokretanje kamere...</p>
                 </div>
@@ -171,6 +172,7 @@
 
         <!-- Ekran 5: Ekran pretraživanja i liste -->
         <section id="ekran-pretrage-i-liste" class="hidden">
+             <!-- ... (sadržaj ovog ekrana ostaje isti) ... -->
             <h2>Pretraga proizvoda u <span id="naziv-trgovine-za-pretragu">[Naziv Trgovine]</span></h2>
             <input type="text" id="input-pretraga-proizvoda" placeholder="Unesi naziv proizvoda...">
             <div id="rezultati-pretrage-proizvoda"></div>
@@ -188,9 +190,11 @@
 
     <script>
         // --- JavaScript kod ostaje POTPUNO ISTI kao u prethodnoj verziji ---
-        // (Sve od // --- KONSTANTE --- pa do kraja skripte)
-        // ... (kopiraj cijeli JavaScript blok iz prethodnog odgovora ovdje) ...
+        // Nema potrebe za izmjenama u JS-u zbog ove CSS promjene rasporeda.
+        // Samo osiguraj da imaš zadnju verziju JS koda koju smo razvijali.
 
+        // ... (kopiraj cijeli JavaScript blok iz prethodnog odgovora ovdje) ...
+        
         // --- KONSTANTE ---
         const API_BASE_URL = "https://api.cijene.dev";
         const API_KEY = "mee5xooThuithei4ees4bae3emos3ook";
