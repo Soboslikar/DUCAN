@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DUĆAN SKENER</title> <!-- Možeš promijeniti u "DUCAN" ako želiš da odgovara repozitoriju za sada -->
-    <!-- Ovdje će kasnije doći link na CSS datoteku, npr. <link rel="stylesheet" href="style.css"> -->
+    <title>DUĆAN SKENER</title>
     <style>
-        /* Minimalni stilovi samo za osnovnu čitljivost, kasnije ćemo ovo prebaciti u style.css */
         body { font-family: sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-color: #f4f4f4; }
         header, footer { background-color: #333; color: white; padding: 1em; text-align: center; width: 100%; }
         main { padding: 20px; background-color: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-top: 20px; width: 90%; max-width: 600px;}
         h1, h2 { color: #333; }
         button {
-            display: block; /* Svaki gumb u novom redu */
-            width: 100%;    /* Gumbi zauzimaju punu širinu unutar svog containera */
+            display: block;
+            width: 100%;
             padding: 15px;
             margin-bottom: 10px;
             font-size: 16px;
@@ -24,12 +22,16 @@
             cursor: pointer;
         }
         button:hover { background-color: #0056b3; }
-        #btn-nastavi-zadnja-trgovina { background-color: #28a745; } /* Drugačija boja za nastavak */
+        #btn-nastavi-zadnja-trgovina { background-color: #28a745; }
         #btn-nastavi-zadnja-trgovina:hover { background-color: #1e7e34; }
-        #btn-povijest { background-color: #6c757d; } /* Drugačija boja za povijest */
+        #btn-povijest { background-color: #6c757d; }
         #btn-povijest:hover { background-color: #545b62; }
+        /* Stil za gumb "Traži proizvode" na početnoj može biti isti kao defaultni,
+           ili ako želiš drugu boju, npr.:
+           #btn-trazi-proizvode-pocetna { background-color: #ffc107; color: black; }
+           #btn-trazi-proizvode-pocetna:hover { background-color: #e0a800; }
+        */
 
-        /* Sakriveni elementi */
         .hidden { display: none; }
     </style>
 </head>
@@ -39,14 +41,13 @@
     </header>
 
     <main id="app-container">
-        <!-- Ovaj dio će se mijenjati ovisno o tome na kojem je "ekranu" korisnik -->
-
         <!-- Ekran 1: Početni ekran -->
         <section id="pocetni-ekran">
             <h2>Dobrodošli!</h2>
             <p>Što želite učiniti?</p>
             <button id="btn-izaberi-trgovinu">Izaberi trgovinu</button>
-            <button id="btn-nastavi-zadnja-trgovina" class="hidden">Nastavi s [Naziv Zadnje Trgovine]</button> <!-- Početno skriven -->
+            <button id="btn-trazi-proizvode-pocetna">Traži proizvode</button> <!-- NOVI GUMB -->
+            <button id="btn-nastavi-zadnja-trgovina" class="hidden">Nastavi s [Naziv Zadnje Trgovine]</button>
             <button id="btn-povijest">Povijest skeniranja/lista</button>
         </section>
 
@@ -54,7 +55,6 @@
         <section id="ekran-odabir-trgovine" class="hidden">
             <h2>Odaberi trgovinu:</h2>
             <select id="select-trgovina" style="width:100%; padding:10px; margin-bottom:10px;">
-                <!-- Opcije će se dinamički dodavati putem JavaScripta -->
                 <option value="">Učitavanje trgovina...</option>
             </select>
             <button id="btn-potvrdi-trgovinu">Potvrdi odabir</button>
@@ -65,17 +65,27 @@
         <section id="glavni-ekran-akcija" class="hidden">
             <h2 id="info-odabrana-trgovina">Trgovina: [Naziv Trgovine]</h2>
             <button id="btn-skeniraj-proizvod">Skeniraj proizvod</button>
-            <button id="btn-pretrazi-proizvode">Pretraži proizvode (Lista)</button>
+            <button id="btn-pretrazi-proizvode-glavni">Pretraži proizvode (Lista)</button> <!-- Preimenovao ID da se razlikuje -->
             <button id="btn-promijeni-trgovinu">Promijeni trgovinu</button>
         </section>
 
-        <!-- Ovdje ćemo kasnije dodavati HTML za ostale "ekrane" koje smo spomenuli:
-             - Ekran skeniranja (s prikazom kamere i listom)
-             - Ekran pretraživanja i liste
-             - Ekran usporedbe cijena
-             - Ekran detalja liste za drugu trgovinu
-             - Ekran povijesti
-        -->
+        <!-- Ekran 4: Ekran pretraživanja i liste (početno skriven) -->
+        <section id="ekran-pretrage-i-liste" class="hidden">
+            <h2>Pretraga proizvoda u <span id="naziv-trgovine-za-pretragu">[Naziv Trgovine]</span></h2>
+            <input type="text" id="input-pretraga-proizvoda" placeholder="Unesi naziv proizvoda..." style="width: calc(100% - 22px); padding: 10px; margin-bottom: 10px;">
+            <div id="rezultati-pretrage-proizvoda">
+                <!-- Ovdje će se dinamički dodavati rezultati pretrage -->
+            </div>
+            <h3>Moja Lista:</h3>
+            <div id="lista-proizvoda-pretraga">
+                <!-- Ovdje će se dinamički dodavati proizvodi na listu -->
+            </div>
+            <p><strong>Ukupno: <span id="ukupno-cijena-pretraga">0.00</span> EUR</strong></p>
+            <button id="btn-usporedi-cijene-sa-pretrage">Usporedi cijene liste</button>
+            <button id="btn-nazad-sa-pretrage">Nazad na akcije</button>
+        </section>
+
+        <!-- Ostali ekrani će doći kasnije -->
 
     </main>
 
@@ -83,21 +93,9 @@
         <p>© <span id="trenutna-godina"></span> DUĆAN SKENER</p>
     </footer>
 
-    <!-- Ovdje će kasnije doći link na JavaScript datoteku, npr. <script src="app.js"></script> -->
     <script>
-        // Minimalni JavaScript samo za dinamičko postavljanje godine u podnožju
         document.getElementById('trenutna-godina').textContent = new Date().getFullYear();
-
-        // Primjer kako ćemo kasnije upravljati prikazom ekrana (ovo će ići u app.js)
-        // const pocetniEkran = document.getElementById('pocetni-ekran');
-        // const ekranOdabirTrgovine = document.getElementById('ekran-odabir-trgovine');
-        // const btnIzaberiTrgovinu = document.getElementById('btn-izaberi-trgovinu');
-        //
-        // btnIzaberiTrgovinu.addEventListener('click', () => {
-        //     pocetniEkran.classList.add('hidden');
-        //     ekranOdabirTrgovine.classList.remove('hidden');
-        //     // Ovdje bi išao poziv za dohvat trgovina i popunjavanje select elementa
-        // });
+        // Ovdje će ići ostatak JavaScript logike u app.js
     </script>
 </body>
 </html>
