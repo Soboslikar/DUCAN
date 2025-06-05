@@ -7,149 +7,74 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <style>
         body { font-family: sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-color: #f4f4f4; }
-        header, footer { background-color: #333; color: white; padding: 1em; text-align: center; width: 100%; flex-shrink: 0; /* Da se ne smanjuju */ }
-        main { 
-            padding: 10px; 
-            background-color: white; 
-            border-radius: 8px; 
-            box-shadow: 0 0 10px rgba(0,0,0,0.1); 
-            margin-top: 10px; 
-            margin-bottom: 10px; /* Dodan margin-bottom */
-            width: 95%; 
-            max-width: 600px; 
-            flex-grow: 1; /* Da zauzme dostupan prostor */
-            display: flex; /* Omogućava da section unutar zauzme punu visinu ako treba */
-            flex-direction: column;
-        }
-        /* Osigurava da sekcije unutar main mogu zauzeti punu visinu ako je main flex kontejner */
-        main > section {
-            widthE: 100%;
-            /* display: flex; flex-direction: column; flex-grow: vo kompletnog `index.html` koda s uključenim zad1; */ /* Ovo je opcionalno, ovisi o sadržaju */
-        }
-
+        header, footer { background-color: #333; color: white; padding: 1em; text-align: center; width: 100%; }
+        main { padding: 10px; /* Smanjen padding da se bolje vidi na manjim ekranima */ background-color: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-top: 10px; width: 95%; max-width: 600px; }
         h1, h2, h3 { color: #333; }
-        button { display: block; width: 1njim CSS izmjenama koje smo diskutirali, s ciljem da skener bude što više gore i da overlay00%; padding: 15px; margin-bottom: 10px; font-size:  radi ispravno.
-
-```html
-<!DOCTYPE html>
-<html lang="hr">
-<head>
-16px; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; }
-        button:hover { background-color: #00    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> <!-- Dodan user-scalable=no -->56b3; }
+        button { display: block; width: 100%; padding: 15px; margin-bottom: 10px; font-size: 16px; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
         #btn-nastavi-zadnja-trgovina { background-color: #28a745; }
-        #btn-nastavi-zadnja-trgovina
-    <title>DUĆAN SKENER</title>
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <style>
-        /* Globalni reset:hover { background-color: #1e7e34; }
+        #btn-nastavi-zadnja-trgovina:hover { background-color: #1e7e34; }
         #btn-povijest { background-color: #6c757d; }
-        #btn-povijest:hover i osnovni stilovi */
-        * { margin: 0; padding: 0; box-sizing: border { background-color: #545b62; }
-        select { width:100%;-box; } /* Osnovni reset */
-        html, body { height: 100%; width: padding:10px; margin-bottom:10px; font-size: 16px; }
-        input 100%; overflow-x: hidden; /* Sprječava horizontalni scroll */}
-        body { [type="text"], input[type="number"] { width: calc(100% - 22
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sanspx); padding: 10px; margin-bottom: 10px; font-size:16px; border: 1px solid #ccc; border-radius: 4px;}
+        #btn-povijest:hover { background-color: #545b62; }
+        select { width:100%; padding:10px; margin-bottom:10px; font-size: 16px; }
+        input[type="text"], input[type="number"] { width: calc(100% - 22px); padding: 10px; margin-bottom: 10px; font-size:16px; border: 1px solid #ccc; border-radius: 4px;}
 
-        .hidden {-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-            display: flex;  display: none; }
+        .hidden { display: none; }
 
-        /* Stilovi za ekran skeniranja */
-        #ekran-sken
-            flex-direction: column; 
-            align-items: center; 
-            background-color:iranja {
-            padding: 0; /* Uklonjen padding sa same sekcije */
-            display: flex; /* #f0f2f5; /* Svjetlija pozadina */
-            color: #333;
-         Omogućava da qr-reader-wrapper i sadrzaj-ispod-skenera pravilno rasporede}
-
-        header, footer { 
-            background-color: #007bff; /* Plava boja kao primarna */
-            color: white; 
-            padding: 0.8em 1em; /* prostor */
-            flex-direction: column;
-            flex-grow: 1; /* Da zauzme sav prostor unutar main ako je main flex */
-        }
-
+        /* Stilovi inspirirani QR Računatorom za ekran skeniranja */
         #qr-reader-wrapper {
-            position Malo manji padding */
-            text-align: center; 
-            width: 100%; 
-            flex-shrink: 0; /* Da se ne smanjuju */
-        }
-        header h1 { font-size: 1.5em; margin: 0;}
-        footer p { font-size: : relative; 
-            width: 100%; 
-            height: 50vh; /* PRILAGODI OVO PO POTREBI (npr. 300px, 60vh, itd.) */
-            /* max-height: 400px; */ /* Opcionalno ograni0.8em; margin: 0;}
-
-        main { 
-            padding: 0; /* Main sada nema padding, sekcije će ga imati ako treba */
-            background-color: white; 
-            /* box-shadow: 0 2px 4px rgba(0,0,0,0.1); */čenje */
-            background-color: #000; 
-            overflow: hidden;
-            flex-shrink: 0; /* Da se ovaj dio ne smanjuje ako nema dovoljno prostora */
+            position: relative; /* Omogućava apsolutno pozicioniranje djece */
+            width: 100%;
+            height: 50vh; /* Fiksna visina, slično kao QR Računator (55vh) - PRILAGODI PO POTREBI */
+            max-height: 400px; /* Ograničenje maksimalne visine */
+            background-color: #000; /* Crna pozadina dok se kamera ne učita ili ako je greška */
+            margin-bottom: 15px; /* Razmak ispod skenera */
+            border: 1px solid #ccc; /* Vidljivi rub kao kod QR Računatora */
+            overflow: hidden; /* Da sadržaj (video) ne curi van */
         }
 
         #qr-reader { 
+            /* Ovaj div je kontejner za html5-qrcode.
+               Ne treba mu position:absolute ako je wrapper relative,
+               ali moramo osigurati da se on i video u njemu rastegnu. */
             width: 100%;
             height: 100%; 
         }
 
- /* Može i bez sjene za čišći izgled */
-            width: 100%; /* Zauzmi punu širinu */
-            max-width: 600px; /* Ograničenje za veće ekrane */
-            flex-grow: 1; /* Da zauzme preostali prostor */
-            display: flex; /* Omogućava da sekcija unutar zauzme punu visinu */
         #qr-reader video { 
             display: block; 
             width: 100%;   
             height: 100%; 
-            object-fit: cover; 
+            object-fit: cover; /* Osigurava da video popuni kontejner, može odrezati rubove */
         }
         
+        /* Ciljamo prvi div unutar #qr-reader kojeg često kreira html5-qrcode */
         #qr-reader > div:first-child { 
             width: 100% !important; 
             height: 100% !important;
-            display: flex !important; 
+            display: flex !important; /* Osiguraj flex da se video rastegne */
             align-items: center !important; 
             justify-content: center !important; 
         }
+        /* Ako html5-qrcode kreira video direktno unutar #qr-reader, gornje pravilo za div:first-child neće naštetiti */
+
 
         #skener-overlay-gornji {
-            position: absolute;
+            position: absolute; /* Preko #qr-reader-wrapper */
             top: 0;
             left: 0;
             width: 100%;
             padding: 10px; 
             box-sizing: border-box;
-            z-index: 10; 
-            background: linear-gradient(to bottom, rgba(0,0,0,0.6)            flex-direction: column;
-            overflow-y: auto; /* Omogući scroll samo za main ako sadržaj pređe */
-        }
-        
-        /* Stilovi za sekcije unutar main-a */
-        main > section {
-            padding: 15px; /* Dodaj padding sekcijama */
-            width: 100%;
-            flex-grow: 1; /* Neka sekcija raste */
-            display: flex; /* Za centriranje i raspored sadržaja unutar sekcije */
-            flex-direction: column;
-        }
-        main > section.hidden { display: none !important; } /* Osiguraj da hidden sakrije */
-
-
-        h2 { font-size: 1.3em; margin-bottom: 1 0%, rgba(0,0,0,0.0) 70%); 
-            pointer-events: none; 
+            z-index: 10; /* Iznad videa */
+            background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.0) 100%); 
+            pointer-events: none; /* Da klikovi prolaze na skener ako treba */
         }
 
         #info-trgovina-skeniranje-overlay, #status-skenera-overlay {
             color: white;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.8); 
-            pointer-events: auto; 
+            pointer-events: auto; /* Omogući interakciju sa samim tekstom */
         }
 
         #info-trgovina-skeniranje-overlay {
@@ -164,29 +89,9 @@
         }
         
         #sadrzaj-ispod-skenera {
-            padding: 15px; 5px; color: #0056b3; }
-        h3 { font-size: 1.1em; margin-top: 15px; margin-bottom: 10px; color: #0056b3;}
-        
-        button { 
-            display: block; 
-            width: 100%; 
-            padding: 12px 15px; /* Malo prilagođen padding */
-            margin-bottom: 10px; 
-            font-size: 1em; /* Prilagođena veličina fonta */
-            font-weight: 600;
-            color: white; 
-            background-color: #007bff; 
-            border: none; 
-            border-radius: 6px; /* Malo zaobljeniji rubovi */
-            cursor: pointer; 
-            transition: background-color 0.2s ease;
-        }
-        button:hover { background-color: #0056b3; }
-        button:disabled { background-color: #c0
+            padding: 0; /* Nema više potrebe za paddingom ovdje ako je `main` smanjen */
             width: 100%; 
             box-sizing: border-box;
-            flex-grow: 1; /* Da zauzme ostatak prostora ako je ekran-skeniranja flex */
-            overflow-y: auto; /* Scroll ako sadržaj pređe visinu */
         }
 
         #skenirani-proizvodi-lista-container, #info-skeniranog-proizvoda-container, #rezultati-pretrage-proizvoda, #lista-proizvoda-pretraga {
@@ -208,256 +113,7 @@
             <p>Što želite učiniti?</p>
             <button id="btn-izaberi-trgovinu">Izaberi trgovinu</button>
             <button id="btn-trazi-proizvode-pocetna">Traži proizvode</button>
-            <button id="btn-c0c0; cursor: not-allowed; }
-
-        #btn-nastavi-zadnja-trgovina { background-color: #28a745; }
-        #btn-nastavi-zadnja-trgovina:hover { background-color: #1e7e34; }
-        #btn-povijest { background-color: #6c757d; }
-        #btn-povijest:hover { background-color: #545b62; }
-        
-        select { width:100%; padding:12px; margin-bottom:10px; font-size: 1em; border: 1px solid #ced4da; border-radius: 6px; }
-        input[type="text"], input[type="number"] { 
-            width: 100%; /* Neka zauzmu punu širinu */
-            padding: 12px; 
-            margin-bottom: 10px; 
-            font-size:1em; 
-            border: 1px solid #ced4da; 
-            border-radius: 6px;
-        }
-        label { display: block; margin-bottom: 5px; font-weight: 500; }
-
-
-        /* Stilovi za ekran skeniranja - NOVI PRISTUP */
-        #ekran-skeniranja {
-            padding: 0 !important; /* Ukloni padding da wrapper ide do ruba main-a */
-            /* display: flex; flex-direction: column; height: 100%; Ako želimo da zauzme punu visinu */
-        }
-
-        #qr-reader-wrapper {
-            position: relative; 
-            width: 100%; 
-            height: 45vh; /* Visina skenera - PRILAGODI PO ŽELJI (npr. 250px, 50vh) */
-            /* max-height: 350px; */ /* Možeš ograničiti max visinu */
-            background-color: #000; 
-            overflow: hidden;
-        }
-
-        #qr-reader { 
-            width: 10nastavi-zadnja-trgovina" class="hidden">Nastavi s [Naziv Zadnje Trgovine]</button>
-            <button id="btn-povijest">Povijest skeniranja/lista</button>
-        </section>
-
-        <!-- Ekran 2: Odabir trgovine -->
-        <section id="ekran-odabir-trgovine" class="hidden">
-            <!-- ... (sadržaj ovog ekrana ostaje isti) ... -->
-             <h2>Odaberi trgovinu:</h2>
-            <select id="select-trgovina">
-                <option value="">Učitavanje trgovina...</option>
-            </select>
-            <button id="btn-potvrdi-trgovinu" disabled>Potvrdi odabir</button>
-            <button id="btn-nazad-na-pocetnu-sa-odabira">Nazad</button>
-        </section>
-
-        <!-- Ekran 3: Glavni ekran akcija -->
-        <section id="glavni-ekran-akcija" class="hidden">
-            <!-- ... (sadržaj ovog ekrana ostaje isti) ... -->
-            <h2 id="info-odabrana-trgovina">Trgovina: [Naziv Trgovine]</h2>
-            <button id="btn-skeniraj-proizvod">Skeniraj proizvod</button>
-            <button id="btn-pretrazi-proizvode-glavni">Pretraži proizvode (Lista)</button>
-            <button id="btn-promijeni-trgovinu">Promijeni trgovinu</button>
-        </section>
-
-        <!-- Ekran 4: Ekran skeniranja (novi raspored) -->
-        <section id="ekran-skeniranja" class="hidden">
-            <div id="qr-reader-wrapper">
-                <div id="qr-reader"></div> 
-                <div id="skener-overlay-gornji">
-                    <h2 id="info-trgovina-skeniranje-overlay">Trgovina: [Naziv Trgovine]</h2>
-                    <p id="status-skenera-overlay">Pokretanje kamere...</p>
-                </div>
-            </div>
-
-            <div id="sadrzaj-ispod-skenera">
-                <div id="info-skeniranog-proizvoda-container" class="hidden" style="margin-bottom: 20px;">
-                    <h3>Skenirani proizvod:</h3>
-                    <p><strong>Naziv:</strong> <span id="skeniran-naziv"></span></p>
-                    <p><strong>Cijena:</strong> <span id="skenirana-cijena"></span> EUR</p>
-                    <p><strong>Cijena po JM:</strong> <span id="skenirana-cijena-po-jedinici"></span></p>
-                    <div>
-                        <label for="skenirana-kolicina">Količina:</label>
-                        <input type="number" id="skenirana-kolicina" value="1" min="1" style="width: 60px; padding: 5px;">
-                    </div>
-                    <button id="btn-dodaj-skenirano-na-listu" style="margin-top:10px;">Dodaj na listu</button>
-                </div>
-
-                <div id="skenirani-proizvodi-lista-container">
-0%;
-            height: 100%; 
-        }
-
-        #qr-reader video { 
-            display: block; 
-            width: 100%;   
-            height: 100%; 
-            object-fit: cover; 
-        }
-        
-        #qr-reader > div:first-child { /* Prvi div koji html5-qrcode kreira */
-            width: 100% !important; 
-            height: 100% !important;
-            display: flex !important; 
-            align-items: center !important; 
-            justify-content: center !important; 
-        }
-        /* Ako postoji još jedan div unutar prvog koji sadrži video: */
-        #qr-reader > div:first-child > div {
-            width: 100% !important; 
-            height: 100% !important;
-        }
-
-
-        #skener-overlay-gornji {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 10px 15px; /* Padding za tekst unutar overlaya */
-            box-sizing: border-box;
-            z-index: 10; 
-            background: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 80%); 
-            pointer-events: none; 
-        }
-
-        #info-trgovina-skeniranje-overlay, #status-skenera-overlay {
-            color: white;
-            text-shadow: 0px 1px 3px rgba(0,0,0,0.7); 
-            pointer-events: auto; 
-        }
-
-        #info-trgovina-skeniranje-overlay {
-            font-size: 1.2em; 
-            font-weight: 600; /* Malo manje bold */
-            margin: 0 0 4px 0; 
-        }
-
-        #status-skenera-overlay {
-            font-size: 0.9em; 
-            margin: 0;
-        }
-        
-        #sadrzaj-ispod-skenera {
-            padding: 15px; 
-            width: 100%; 
-            box-sizing: border-box;
-            flex-grow: 1; /* Neka ovaj dio zauzme ostatak visine */
-            overflow-y: auto; /* Ako sadržaj pređe, skrolaj ovaj dio */
-        }
-
-        #skenirani-proizvodi-lista-container, #info-skeniranog-proizvoda-container, #rezultati-pretrage-proizvoda, #lista-proizvoda-pretraga {
-            border: 1px solid #e0e0e0; padding: 10px; margin-bottom: 15px; background-color: #fdfdfd; min-height: 50px; border-radius: 6px;
-        }
-        .proizvod-na-listi { display: flex; justify-content: space-between; padding: 8px 5px; border-bottom: 1px solid #eee; }
-        .proizvod-na-listi:last-child { border-bottom: none; }
-        #info-skeniranog-proizvoda-container p { margin: 8px 0; }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>DUĆAN SKENER</h1>
-    </header>
-
-    <main id="app-container">
-        <!-- Ekran 1: Početni ekran -->
-        <section id="pocetni-ekran">
-            <h2>Dobrodošli!</h2>
-            <p>Što želite učiniti?</p>
-            <button id="btn-izaberi-trgovinu">Izaberi trgovinu</button>
-            <button id="btn-trazi-proizvode-pocetna">Traži proizvode</button>
-            <button id="btn-nastavi-zadnja-trgovina" class="hidden">Nastavi s [Naziv                    <h3>Moja lista:</h3>
-                    <div id="skenirani-proizvodi-lista"></div>
-                    <p><strong>Ukupno: <span id="ukupno-cijena-skeniranje">0.00</span> EUR</strong></p>
-                </div>
-                
-                <button id="btn-pokreni-zaustavi-skener" style="margin-top: 20px;">Pokreni skener</button>
-                <button id="btn-nazad-sa-skeniranja">Nazad na akcije</button>
-            </div>
-        </section>
-
-        <!-- Ekran 5: Ekran pretraživanja i liste -->
-        <section id="ekran-pretrage-i-liste" class="hidden">
-            <!-- ... (sadržaj ovog ekrana ostaje isti) ... -->
-            <h2>Pretraga proizvoda u <span id="naziv-trgovine-za-pretragu">[Naziv Trgovine]</span></h2>
-            <input type="text" id="input-pretraga-proizvoda" placeholder="Unesi naziv proizvoda...">
-            <div id="rezultati-pretrage-proizvoda"></div>
-            <h3>Moja Lista:</h3>
-            <div id="lista-proizvoda-pretraga"></div>
-            <p><strong>Ukupno: <span id="ukupno-cijena-pretraga">0.00</span> EUR</strong></p>
-            <button id="btn-usporedi-cijene-sa-pretrage">Usporedi cijene liste</button>
-            <button id="btn-nazad-sa-pretrage-na-akcije">Nazad na akcije</button>
-        </section>
-    </main>
-
-    <footer>
-        <p>© <span id="trenutna-godina"></span> DUĆAN SKENER</p>
-    </footer>
-
-    <script>
-        // --- JavaScript kod ostaje POTPUNO ISTI kao u prethodnoj verziji ---
-        // ... (kopiraj cijeli JavaScript blok iz prethodnog odgovora ovdje) ...
-        // --- KONSTANTE ---
-        const API_BASE_URL = "https://api.cijene.dev";
-        const API_KEY = "mee5xooThuithei4ees4bae3emos3ook";
-
-        // --- DOM ELEMENTI ---
-        const pocetniEkran = document.getElementById('pocetni-ekran');
-        const ekranOdabirTrgovine = document.getElementById('ekran-odabir-trgovine');
-        const glavniEkranAkcija = document.getElementById('glavni-ekran-akcija');
-        const ekranSkeniranja = document.getElementById('ekran-skeniranja');
-        const ekranPretrageIListe = document.getElementById('ekran-pretrage-i-liste');
-
-        const btnIzaberiTrgovinu = document.getElementById('btn-izaberi-trgovinu');
-        const btnTraziProizvodePocetna = document.getElementById('btn-trazi-proizvode-pocetna');
-        const btnNastaviZadnjaTrgovina = document.getElementById('btn-nastavi-zadnja-trgovina');
-
-        const selectTrgovina = document.getElementById('select-trgovina');
-        const btnPotvrdiTrgovinu = document.getElementById('btn-potvrdi-trgovinu');
-        const btnNazadNaPocetnuSaOdabira = document.getElementById('btn-nazad-na-pocetnu-sa-odabira');
-
-        const infoOdabranaTrgovina = document.getElementById('info-odabrana-trgovina'); 
-        const infoTrgovinaSkeniranjeOverlay = document.getElementById('info-trgovina-skeniranje-overlay'); 
-        const btnSkenirajProizvod = document.getElementById('btn-skeniraj-proizvod');
-        const btnPretraziProizvodeGlavni = document.getElementById('btn-pretrazi-proizvode-glavni');
-        const btnPromijeniTrgovinu = document.getElementById('btn-promijeni-trgovinu');
-        
-        const nazivTrgovineZaPretragu = document.getElementById('naziv-trgovine-za-pretragu');
-        const btnNazadSaSkeniranja = document.getElementById('btn-nazad-sa-skeniranja');
-        const btnNazadSaPretrageNaAkcije = document.getElementById('btn-nazad-sa-pretrage-na-akcije');
-        
-        const infoSkeniranogProizvodaContainer = document.getElementById('info-skeniranog-proizvoda-container');
-        const skeniranNazivEl = document.getElementById('skeniran-naziv');
-        const skeniranaCijenaEl = document.getElementById('skenirana-cijena');
-        const skeniranaCijenaPoJediniciEl = document.getElementById('skenirana-cijena-po-jedinici');
-        const skeniranaKolicinaInput = document.getElementById('skenirana-kolicina');
-
-        const qrReaderElement = document.getElementById('qr-reader');
-        const statusSkeneraOverlayElement = document.getElementById('status-skenera-overlay'); 
-        const btnPokreniZaustaviSkener = document.getElementById('btn-pokreni-zaustavi-skener');
-
-        let trenutnoOdabranaTrgovina = null; 
-        let zadnjeOdabranaTrgovinaKod = localStorage.getItem('zadnjaTrgovinaKod');
-        let zadnjeOdabranaTrgovinaNaziv = localStorage.getItem('zadnjaTrgovinaNaziv');
-        let html5QrCode = null; 
-
-        function prikaziEkran(ekranId) {
-            [pocetniEkran, ekranOdabirTrgovine, glavniEkranAkcija, ekranSkeniranja, ekranPretrageIListe].forEach(ekran => {
-                if (ekran && ekran.id === ekranId) ekran.classList.remove('hidden');
-                else if (ekran) ekran.classList.add('hidden');
-            });
-        }
-
-        function mapirajKodLancaUNaziv(kod) {
-            if (!kod) return "Nepoznato";
-            const imena = { "konzum": "Konzum", "lidl Zadnje Trgovine]</button>
+            <button id="btn-nastavi-zadnja-trgovina" class="hidden">Nastavi s [Naziv Zadnje Trgovine]</button>
             <button id="btn-povijest">Povijest skeniranja/lista</button>
         </section>
 
@@ -479,11 +135,12 @@
             <button id="btn-promijeni-trgovinu">Promijeni trgovinu</button>
         </section>
 
-        <!-- Ekran 4: Ekran skeniranja -->
+        <!-- Ekran 4: Ekran skeniranja (novi raspored) -->
         <section id="ekran-skeniranja" class="hidden">
-            <div id="qr-reader-wrapper">
-                <div id="qr-reader"></div> 
-                <div id="skener-overlay-gornji">
+            <div id="qr-reader-wrapper"> <!-- Roditeljski kontejner za skener i overlay -->
+                <div id="qr-reader"></div> <!-- Kontejner gdje html5-qrcode renderira video -->
+                
+                <div id="skener-overlay-gornji"> <!-- Overlay koji ide preko videa -->
                     <h2 id="info-trgovina-skeniranje-overlay">Trgovina: [Naziv Trgovine]</h2>
                     <p id="status-skenera-overlay">Pokretanje kamere...</p>
                 </div>
@@ -497,7 +154,7 @@
                     <p><strong>Cijena po JM:</strong> <span id="skenirana-cijena-po-jedinici"></span></p>
                     <div>
                         <label for="skenirana-kolicina">Količina:</label>
-                        <input type="number" id="skenirana-kolicina" value="1" min="1" style="width: 70px; padding: 8px;">
+                        <input type="number" id="skenirana-kolicina" value="1" min="1" style="width: 60px; padding: 5px;">
                     </div>
                     <button id="btn-dodaj-skenirano-na-listu" style="margin-top:10px;">Dodaj na listu</button>
                 </div>
@@ -515,6 +172,7 @@
 
         <!-- Ekran 5: Ekran pretraživanja i liste -->
         <section id="ekran-pretrage-i-liste" class="hidden">
+             <!-- ... (sadržaj ovog ekrana ostaje isti) ... -->
             <h2>Pretraga proizvoda u <span id="naziv-trgovine-za-pretragu">[Naziv Trgovine]</span></h2>
             <input type="text" id="input-pretraga-proizvoda" placeholder="Unesi naziv proizvoda...">
             <div id="rezultati-pretrage-proizvoda"></div>
@@ -532,8 +190,11 @@
 
     <script>
         // --- JavaScript kod ostaje POTPUNO ISTI kao u prethodnoj verziji ---
-        // ... (Kopiraj ovdje kompletan JavaScript blok iz odgovora gdje smo zadnje mijenjali JS) ...
+        // Nema potrebe za izmjenama u JS-u zbog ove CSS promjene rasporeda.
+        // Samo osiguraj da imaš zadnju verziju JS koda koju smo razvijali.
 
+        // ... (kopiraj cijeli JavaScript blok iz prethodnog odgovora ovdje) ...
+        
         // --- KONSTANTE ---
         const API_BASE_URL = "https://api.cijene.dev";
         const API_KEY = "mee5xooThuithei4ees4bae3emos3ook";
@@ -587,7 +248,7 @@
 
         function mapirajKodLancaUNaziv(kod) {
             if (!kod) return "Nepoznato";
-            const imena = { "konzum": "Konzum", "lidl": "Lidl", "spar": "Lidl", "spar": "Spar", "plodine": "Plodine", "kaufland": "Kaufland", "tommy": "Tommy", "studenac": "Studenac", "eurospin": "Eurospin", "dm": "dm", "ktc": "KTC", "metro": "Metro", "trgocentar": "Trgocentar", "zabac": "Žabac", "vrutak": "Vrutak", "ribola": "Ribola", "ntl": "NTL" };
+            const imena = { "konzum": "Konzum", "lidl": "Lidl", "spar": "Spar", "plodine": "Plodine", "kaufland": "Kaufland", "tommy": "Tommy", "studenac": "Studenac", "eurospin": "Eurospin", "dm": "dm", "ktc": "KTC", "metro": "Metro", "trgocentar": "Trgocentar", "zabac": "Žabac", "vrutak": "Vrutak", "ribola": "Ribola", "ntl": "NTL" };
             return imena[kod.toLowerCase()] || (kod.charAt(0).toUpperCase() + kod.slice(1));
         }
 
