@@ -338,8 +338,7 @@
 
     <footer style="padding: 10px 1em;">
         <p id="zahvala-api" style="margin:0; text-align:center;">Podaci o cijenama ljubaznošću <a href="https://cijene.dev/" target="_blank" rel="noopener noreferrer">cijene.dev</a> (Senko Rašić).</p>
-        <!-- Dodan span za trenutnu godinu ako nije već tu -->
-        <p style="margin:5px 0 0 0; text-align:center; font-size: 0.8em;">© <span id="trenutna-godina"></span> DUĆAN SKENER</p>
+        <p style="margin:5px 0 0 0; text-align:center; font-size: 0.8em;">© <span id="trenutna-godina">2024</span> DUĆAN SKENER</p>
     </footer>
 
     <!-- Statcounter Code -->
@@ -450,7 +449,8 @@
             if (!zaUsporedbu) {
                 zadnjiSkeniraniProizvodInfo = null; 
                 skeniranNazivEl.textContent = `Tražim: ${ean}...`;
-                skeniranaCijenaEl.textContent = "..."; skeniranaCijenaPoJediniciEl.textContent = "...";
+                skeniranaCijenaEl.textContent = "..."; 
+                skeniranaCijenaPoJediniciEl.textContent = "...";
                 skeniranItemUkupnoEl.textContent = "Ukupno: ...";
                 infoSkeniranogProizvodaContainer.classList.remove('hidden'); 
                 skeniranaKolicinaInput.value = 1;
@@ -474,16 +474,29 @@
                 if (data.chains && data.chains.length > 0) {
                     const productInfo = data.chains[0]; 
                     const nazivPrikaz = productInfo.name || data.name || "Nepoznat naziv";
-                    const cijena = parseFloat(productInfo.min_price);
+                    
+                    let cijenaZaPrikaz = null;
+                    if (productInfo.max_price !== null && productInfo.max_price !== undefined && !isNaN(parseFloat(productInfo.max_price))) {
+                        cijenaZaPrikaz = parseFloat(productInfo.max_price);
+                    } else if (productInfo.avg_price !== null && productInfo.avg_price !== undefined && !isNaN(parseFloat(productInfo.avg_price))) {
+                        cijenaZaPrikaz = parseFloat(productInfo.avg_price);
+                    } else if (productInfo.min_price !== null && productInfo.min_price !== undefined && !isNaN(parseFloat(productInfo.min_price))) {
+                        cijenaZaPrikaz = parseFloat(productInfo.min_price);
+                    }
 
-                    if (isNaN(cijena)) { throw new Error("Cijena nije broj."); }
+                    if (cijenaZaPrikaz === null) { throw new Error("Cijena za proizvod nije dostupna ili nije ispravan broj."); }
 
                     skeniranNazivEl.textContent = nazivPrikaz;
-                    skeniranaCijenaEl.textContent = cijena.toFixed(2);
-                    const cijenaJM = izracunajCijenuPoJM(cijena, productInfo.quantity, productInfo.unit);
+                    skeniranaCijenaEl.textContent = cijenaZaPrikaz.toFixed(2);
+                    const cijenaJM = izracunajCijenuPoJM(cijenaZaPrikaz, productInfo.quantity, productInfo.unit);
                     skeniranaCijenaPoJediniciEl.textContent = cijenaJM;
                     
-                    zadnjiSkeniraniProizvodInfo = { ean: ean, naziv: nazivPrikaz, cijenaKomad: cijena, cijenaJM: cijenaJM };
+                    zadnjiSkeniraniProizvodInfo = { 
+                        ean: ean, 
+                        naziv: nazivPrikaz, 
+                        cijenaKomad: cijenaZaPrikaz,
+                        cijenaJM: cijenaJM 
+                    };
                     azurirajUkupnoZaSkeniranuStavku();
                     btnDodajSkeniranoNaListu.disabled = false;
                     btnUsporediCijene.disabled = false;
@@ -550,7 +563,8 @@
 
             if (sviPodaci && sviPodaci.chains && sviPodaci.chains.length > 0) {
                 usporedbaCijenaContainer.innerHTML = '';
-                const ostaleTrgovine = sviPodaci.chains.filter(chainInfo => chainInfo.chain !== trenutnoOdabranaTrgovina.code); // KORISTI chainInfo.chain
+                // KORISTI chainInfo.chain umjesto chainInfo.chain_code za filter
+                const ostaleTrgovine = sviPodaci.chains.filter(chainInfo => chainInfo.chain !== trenutnoOdabranaTrgovina.code);
 
                 if (ostaleTrgovine.length === 0) {
                     usporedbaNemaPodatakaPorukaEl.textContent = "Nema podataka o cijenama u drugim trgovinama za ovaj proizvod.";
@@ -560,12 +574,12 @@
 
                 ostaleTrgovine.sort((a,b) => (a.min_price === null ? Infinity : a.min_price) - (b.min_price === null ? Infinity : b.min_price) )
                 .forEach(chainInfo => {
-                    // console.log("Chain Info za usporedbu:", chainInfo); // Ostavljeno za debug ako treba
+                    // console.log("Chain Info za usporedbu:", chainInfo); 
 
                     const divUsporedbe = document.createElement('div');
                     divUsporedbe.classList.add('usporedba-stavka');
                     
-                    const cijenaDecimal = chainInfo.min_price !== null ? parseFloat(chainInfo.min_price) : null;
+                    const cijenaDecimal = chainInfo.min_price !== null ? parseFloat(chainInfo.min_price) : null; // Ovdje možemo odlučiti koju cijenu iz chainInfo koristiti (min_price, max_price...)
                     const cijenaPrikaz = cijenaDecimal !== null ? cijenaDecimal.toFixed(2) + " EUR" : "N/A";
                     let klasaBojeCijene = '';
 
